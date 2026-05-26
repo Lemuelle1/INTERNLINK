@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternLink - Log In</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Global Styling -->
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <!-- Global Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main App Content -->
+  <main class="app-container d-flex align-items-center justify-content-center py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+          <div class="glass-card animate-fade-in">
+            <div class="text-center mb-4">
+              <i class="bi bi-box-arrow-in-right text-primary fs-1 glow-text-primary"></i>
+              <h2 class="mt-2 fw-bold">Welcome Back</h2>
+              <p class="text-muted text-sm">Log in to check listings and manage applications.</p>
+            </div>
+
+            <!-- Form -->
+            <form id="login-form">
+              <div class="form-group-custom">
+                <label class="form-label-custom" for="log-email">Email Address</label>
+                <input type="email" id="log-email" class="form-input-custom" placeholder="e.g. student@internlink.com" required>
+              </div>
+
+              <div class="form-group-custom">
+                <label class="form-label-custom" for="log-password">Password</label>
+                <input type="password" id="log-password" class="form-input-custom" placeholder="••••••••" required>
+              </div>
+
+              <button type="submit" class="btn-custom btn-custom-primary w-100 justify-content-center py-3 mt-3">
+                <i class="bi bi-box-arrow-in-right"></i> Log In
+              </button>
+            </form>
+
+            <div class="text-center mt-4">
+              <p class="text-muted text-sm mb-0">
+                Don't have an account? <a href="/pages/register.html" class="fw-semibold">Sign up here</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center mt-auto">
+    <div class="container">
+      <p class="text-muted text-sm mb-0">&copy; 2026 InternLink. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Global Components -->
+  <script type="module" src="/js/components/navbar.js"></script>
+
+  <!-- Login Script -->
+  <script type="module">
+    import { login } from '/js/auth.js';
+    import toast from '/js/components/toast.js';
+    import loader from '/js/components/loader.js';
+
+    // Redirect if logged in already
+    if (localStorage.getItem('token')) {
+      window.location = '/pages/dashboard.html';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('log-email').value.trim();
+      const password = document.getElementById('log-password').value;
+
+      loader.show();
+      try {
+        const res = await login(email, password);
+        if (res.message) {
+          toast.error(res.message);
+        } else {
+          toast.success('Log in successful!');
+        }
+      } catch (err) {
+        toast.error('An error occurred during log in.');
+        console.error(err);
+      } finally {
+        loader.hide();
+      }
+    });
+  </script>
+</body>
+</html>

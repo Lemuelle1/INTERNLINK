@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternLink - Browse Opportunities</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Global Styling -->
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <!-- Global Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main App Content -->
+  <main class="app-container py-5">
+    <div class="container animate-fade-in">
+      <div class="row g-4">
+        
+        <!-- Left: Filters Sidebar -->
+        <div class="col-lg-3">
+          <div class="glass-card mb-4">
+            <h3 class="h5 fw-bold mb-3">Filters</h3>
+            <hr class="text-muted mb-3">
+            
+            <form id="filters-form">
+              <!-- Search query in sidebar too -->
+              <div class="form-group-custom">
+                <label class="form-label-custom" for="filter-search">Keyword Search</label>
+                <div class="position-relative">
+                  <input type="text" id="filter-search" class="form-input-custom ps-4" placeholder="Title, company, skill...">
+                  <i class="bi bi-search text-muted position-absolute start-2 top-50 translate-middle-y ms-2" style="font-size: 13px;"></i>
+                </div>
+              </div>
+
+              <!-- Type Select -->
+              <div class="form-group-custom">
+                <label class="form-label-custom">Opportunity Type</label>
+                
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="radio" name="type-filter" id="type-all" value="" checked>
+                  <label class="form-check-label text-light text-sm" for="type-all">
+                    All Categories
+                  </label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="radio" name="type-filter" id="type-internship" value="internship">
+                  <label class="form-check-label text-light text-sm" for="type-internship">
+                    Internships Only
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="type-filter" id="type-scholarship" value="scholarship">
+                  <label class="form-check-label text-light text-sm" for="type-scholarship">
+                    Scholarships Only
+                  </label>
+                </div>
+              </div>
+
+              <!-- Stipend Filter info helper -->
+              <div class="form-group-custom mb-0">
+                <label class="form-label-custom">Stipend Status</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="filter-paid-only">
+                  <label class="form-check-label text-light text-sm" for="filter-paid-only">
+                    Paid Listings Only
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Listings Main Grid -->
+        <div class="col-lg-9">
+          <!-- Top bar -->
+          <div class="glass-card mb-4 py-3 d-flex align-items-center justify-content-between">
+            <h2 class="h5 fw-bold mb-0 text-primary glow-text-primary">
+              <span id="results-count">0</span> Opportunities Available
+            </h2>
+            <div class="d-none d-md-flex align-items-center gap-2">
+              <span class="text-muted text-xs">Sorted by:</span>
+              <span class="badge bg-secondary p-2">Latest Postings</span>
+            </div>
+          </div>
+
+          <!-- Listings container -->
+          <div id="listings-grid" class="row g-4">
+            <!-- Opportunity cards will be dynamically loaded here -->
+            <div class="text-center py-5">
+              <div class="spinner-custom mx-auto mb-3"></div>
+              <p class="text-muted">Loading opportunities...</p>
+            </div>
+          </div>
+          
+          <!-- Empty State -->
+          <div id="empty-state" class="glass-card text-center py-5 d-none">
+            <i class="bi bi-search-heart text-primary fs-1 mb-3 glow-text-primary"></i>
+            <h3 class="h4 fw-bold">No Listings Found</h3>
+            <p class="text-muted max-width-500 mx-auto text-sm">
+              We couldn't find any opportunities matching your current filters. Try refining your keyword search or selecting another category.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center mt-auto">
+    <div class="container">
+      <p class="text-muted text-sm mb-0">&copy; 2026 InternLink. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Global Components -->
+  <script type="module" src="/js/components/navbar.js"></script>
+
+  <!-- Browse Logic -->
+  <script type="module">
+    import { getOpportunities } from '/js/opportunities.js';
+    import toast from '/js/components/toast.js';
+
+    let allListings = [];
+
+    // Parse URL queries on load
+    const loadFromUrlParams = () => {
+      const params = new URLSearchParams(window.location.search);
+      const search = params.get('search');
+      if (search) {
+        document.getElementById('filter-search').value = search;
+      }
+      
+      const type = params.get('type');
+      if (type === 'internship') {
+        document.getElementById('type-internship').checked = true;
+      } else if (type === 'scholarship') {
+        document.getElementById('type-scholarship').checked = true;
+      }
+    };
+
+    // Render opportunities
+    const renderListings = (listings) => {
+      const grid = document.getElementById('listings-grid');
+      const emptyState = document.getElementById('empty-state');
+      grid.innerHTML = '';
+
+      if (listings.length === 0) {
+        emptyState.classList.remove('d-none');
+        document.getElementById('results-count').innerText = '0';
+        return;
+      }
+
+      emptyState.classList.add('d-none');
+      document.getElementById('results-count').innerText = listings.length;
+
+      listings.forEach(item => {
+        const isScholarship = item.type === 'scholarship';
+        const badgeClass = isScholarship ? 'badge-custom-scholarship' : 'badge-custom-internship';
+        const typeIcon = isScholarship ? 'bi-mortarboard-fill' : 'bi-briefcase-fill';
+        const typeLabel = isScholarship ? 'Scholarship' : 'Internship';
+
+        const cardHTML = `
+          <div class="col-md-6">
+            <div class="glass-card glass-card-hover h-100 d-flex flex-column">
+              <div class="d-flex align-items-start justify-content-between mb-3">
+                <div>
+                  <span class="badge-custom ${badgeClass} mb-2">
+                    <i class="bi ${typeIcon}"></i> ${typeLabel}
+                  </span>
+                  <h3 class="h5 fw-bold mb-1">${item.title}</h3>
+                  <p class="text-primary fw-semibold mb-0" style="font-size: 14px;">
+                    <i class="bi bi-building"></i> ${item.company}
+                  </p>
+                </div>
+              </div>
+              
+              <p class="text-muted text-sm flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5;">
+                ${item.description}
+              </p>
+
+              <hr class="text-muted my-3">
+
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <span class="text-muted text-xs d-block">Location</span>
+                  <span class="text-light text-sm fw-semibold"><i class="bi bi-geo-alt"></i> ${item.location}</span>
+                </div>
+                <div class="col-6">
+                  <span class="text-muted text-xs d-block">Stipend / Value</span>
+                  <span class="text-accent text-sm fw-semibold"><i class="bi bi-cash-coin"></i> ${item.stipend}</span>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between mt-auto pt-2">
+                <span class="text-muted text-xs">
+                  Deadline: ${new Date(item.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+                <a href="/pages/opportunity.html?id=${item._id}" class="btn-custom btn-custom-primary py-2 px-3 text-sm">
+                  View Details <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += cardHTML;
+      });
+    };
+
+    // Load listings from API
+    const loadListings = async () => {
+      const search = document.getElementById('filter-search').value.trim();
+      
+      let type = '';
+      const typeOptions = document.getElementsByName('type-filter');
+      for (const opt of typeOptions) {
+        if (opt.checked) {
+          type = opt.value;
+          break;
+        }
+      }
+
+      try {
+        const data = await getOpportunities({ type, search });
+        if (Array.isArray(data)) {
+          allListings = data;
+          applyClientFilters();
+        } else {
+          toast.error(data.message || 'Error fetching opportunities');
+        }
+      } catch (err) {
+        toast.error('Network error loading opportunities.');
+        console.error(err);
+      }
+    };
+
+    // Client-side filtering (e.g. Paid Only check)
+    const applyClientFilters = () => {
+      let filtered = [...allListings];
+      
+      const paidOnly = document.getElementById('filter-paid-only').checked;
+      if (paidOnly) {
+        filtered = filtered.filter(item => {
+          const stipend = item.stipend.toLowerCase();
+          return !stipend.includes('unpaid') && stipend !== 'none' && stipend !== '$0';
+        });
+      }
+
+      renderListings(filtered);
+    };
+
+    // Listeners for live filtering
+    document.getElementById('filter-search').addEventListener('input', loadListings);
+    
+    document.getElementsByName('type-filter').forEach(radio => {
+      radio.addEventListener('change', loadListings);
+    });
+
+    document.getElementById('filter-paid-only').addEventListener('change', applyClientFilters);
+
+    // Initial Execute
+    loadFromUrlParams();
+    loadListings();
+  </script>
+</body>
+</html>

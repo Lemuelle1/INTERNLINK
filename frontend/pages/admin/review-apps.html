@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternLink - Review Applications</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Global Styling -->
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <!-- Global Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main App Content -->
+  <main class="app-container py-5">
+    <div class="container animate-fade-in">
+      
+      <!-- Hub Header -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+          <h1 class="h2 fw-bold mb-1">Student Applications</h1>
+          <p class="text-muted text-sm mb-0">Evaluate student pitches, inspect CV files, and manage candidate workflows.</p>
+        </div>
+        
+        <!-- Filter dropdown -->
+        <div class="d-flex align-items-center gap-2">
+          <label class="form-label-custom mb-0 me-2 text-nowrap" for="filter-opp-select">Show for:</label>
+          <select id="filter-opp-select" class="form-input-custom py-2" style="background-color: var(--color-surface); min-width: 220px;">
+            <option value="">All Listings</option>
+            <!-- Opportunities dynamically populated -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Applications Table -->
+      <div class="glass-card">
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+            <thead>
+              <tr class="text-muted text-xs uppercase" style="border-bottom: 1.5px solid var(--color-border);">
+                <th scope="col" class="pb-3">Candidate</th>
+                <th scope="col" class="pb-3">Opportunity</th>
+                <th scope="col" class="pb-3">Skills</th>
+                <th scope="col" class="pb-3">Pitch</th>
+                <th scope="col" class="pb-3">CV File</th>
+                <th scope="col" class="pb-3">Status</th>
+                <th scope="col" class="pb-3 text-end">Decisions</th>
+              </tr>
+            </thead>
+            <tbody id="reviews-table-body">
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                  <span class="text-muted text-sm ms-2">Loading applications...</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="reviews-empty-state" class="text-center py-5 d-none">
+          <i class="bi bi-file-earmark-diff text-muted fs-1 mb-2"></i>
+          <h4 class="h5 fw-bold mb-1">No Applications Found</h4>
+          <p class="text-muted text-sm mb-0">No student has applied for this opportunity yet.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- PITCH MODAL -->
+  <div class="modal fade" id="pitchModal" tabindex="-1" aria-labelledby="pitchModalLabel" aria-hidden="true" style="backdrop-filter: blur(10px);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card p-2 border-0 text-white">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold" id="pitchModalLabel">Student Cover Letter</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body border-0 py-2">
+          <p id="modal-pitch-content" class="text-light text-sm" style="white-space: pre-wrap; line-height: 1.6;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn-custom btn-custom-outline py-2" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANDIDATE DETAIL MODAL -->
+  <div class="modal fade" id="candidateModal" tabindex="-1" aria-labelledby="candidateModalLabel" aria-hidden="true" style="backdrop-filter: blur(10px);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card p-2 border-0 text-white">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold" id="candidateModalLabel">Candidate Profile</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body border-0 py-2">
+          <h4 id="candidate-name" class="h5 fw-bold text-primary mb-1">...</h4>
+          <p id="candidate-email" class="text-muted text-sm mb-3">...</p>
+          
+          <h5 class="h6 text-uppercase fw-bold text-muted text-xs mb-2">Short Bio</h5>
+          <p id="candidate-bio" class="text-light text-sm mb-4">...</p>
+
+          <h5 class="h6 text-uppercase fw-bold text-muted text-xs mb-2">Acquired Skills</h5>
+          <div id="candidate-skills" class="d-flex flex-wrap gap-1"></div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn-custom btn-custom-outline py-2" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center mt-auto">
+    <div class="container">
+      <p class="text-muted text-sm mb-0">&copy; 2026 InternLink. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Global Components -->
+  <script type="module" src="/js/components/navbar.js"></script>
+
+  <!-- Review Applications Logic -->
+  <script type="module">
+    import { guardPage } from '/js/auth.js';
+    import { getOpportunities } from '/js/opportunities.js';
+    import { getAllApplications, updateApplicationStatus } from '/js/admin.js';
+    import toast from '/js/components/toast.js';
+    import loader from '/js/components/loader.js';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let filterOpportunityId = urlParams.get('opportunityId') || '';
+
+    let adminUser = null;
+    let opportunities = [];
+    let applications = [];
+
+    const loadReviewPage = async () => {
+      loader.show();
+      adminUser = await guardPage('admin');
+      if (!adminUser) return; // Guard redirects
+
+      try {
+        // Fetch opportunities for select dropdown
+        const oppsData = await getOpportunities();
+        if (Array.isArray(oppsData)) {
+          opportunities = oppsData;
+          populateOpportunityFilter();
+        }
+
+        // Fetch applications
+        const appsData = await getAllApplications();
+        if (Array.isArray(appsData)) {
+          applications = appsData;
+        }
+
+        renderReviewsTable();
+      } catch (err) {
+        toast.error('Network error loading candidates.');
+        console.error(err);
+      } finally {
+        loader.hide();
+      }
+    };
+
+    const populateOpportunityFilter = () => {
+      const select = document.getElementById('filter-opp-select');
+      opportunities.forEach(opp => {
+        const opt = document.createElement('option');
+        opt.value = opp._id;
+        opt.innerText = `${opp.title} (${opp.company})`;
+        if (opp._id === filterOpportunityId) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+    };
+
+    const renderReviewsTable = () => {
+      const tbody = document.getElementById('reviews-table-body');
+      const emptyState = document.getElementById('reviews-empty-state');
+      
+      let filtered = [...applications];
+      if (filterOpportunityId) {
+        filtered = filtered.filter(app => app.opportunity?._id === filterOpportunityId);
+      }
+
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        emptyState.classList.remove('d-none');
+        return;
+      }
+      emptyState.classList.add('d-none');
+
+      filtered.forEach(app => {
+        const student = app.student;
+        const opp = app.opportunity;
+        if (!student || !opp) return; // Cleanup orphaned DB items
+
+        // Status Badge Style
+        let statusClass = 'badge-custom-pending';
+        if (app.status === 'accepted') statusClass = 'badge-custom-accepted';
+        if (app.status === 'rejected') statusClass = 'badge-custom-rejected';
+        if (app.status === 'reviewed') statusClass = 'badge-custom-reviewed';
+
+        // Skills tags render
+        let skillsHTML = '';
+        if (student.skills && student.skills.length > 0) {
+          skillsHTML = student.skills.slice(0, 2).map(s => 
+            `<span class="badge bg-secondary text-capitalize text-xs p-1 px-2 m-05">${s}</span>`
+          ).join(' ');
+          if (student.skills.length > 2) {
+            skillsHTML += ` <span class="text-muted text-xs">+${student.skills.length - 2}</span>`;
+          }
+        } else {
+          skillsHTML = '<span class="text-muted text-xs">No skills</span>';
+        }
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--color-border)';
+        tr.innerHTML = `
+          <td class="py-3">
+            <button class="btn btn-link text-start text-light p-0 fw-semibold text-decoration-none view-candidate-btn" 
+                    data-name="${student.name}" data-email="${student.email}" data-bio="${student.bio || 'No bio entered.'}" data-skills="${student.skills ? student.skills.join(',') : ''}">
+              ${student.name}
+            </button>
+            <span class="text-muted text-xs d-block">${student.email}</span>
+          </td>
+          <td class="py-3">
+            <span class="fw-semibold text-sm text-light d-block">${opp.title}</span>
+            <span class="text-muted text-xs">${opp.company}</span>
+          </td>
+          <td class="py-3">${skillsHTML}</td>
+          <td class="py-3">
+            <button class="btn-custom btn-custom-outline btn-sm py-1 px-2 text-xs read-pitch-btn" data-pitch="${app.coverLetter.replace(/"/g, '&quot;')}">
+              Read Pitch
+            </button>
+          </td>
+          <td class="py-3">
+            <a href="${app.cvUrl}" target="_blank" class="badge bg-danger text-light text-decoration-none py-2 px-3 fw-semibold">
+              <i class="bi bi-filetype-pdf"></i> Open CV
+            </a>
+          </td>
+          <td class="py-3">
+            <span class="badge-custom ${statusClass} text-xs py-1 px-2 text-capitalize">${app.status}</span>
+          </td>
+          <td class="py-3 text-end">
+            <div class="d-flex justify-content-end gap-1">
+              <button class="btn-custom btn-custom-accent btn-sm py-1 px-2 action-decision-btn" data-id="${app._id}" data-status="accepted" title="Accept Candidate" ${app.status === 'accepted' ? 'disabled' : ''}>
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button class="btn-custom btn-custom-danger btn-sm py-1 px-2 action-decision-btn" data-id="${app._id}" data-status="rejected" title="Reject Candidate" ${app.status === 'rejected' ? 'disabled' : ''}>
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Bind Details click
+      document.querySelectorAll('.view-candidate-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const name = e.currentTarget.getAttribute('data-name');
+          const email = e.currentTarget.getAttribute('data-email');
+          const bio = e.currentTarget.getAttribute('data-bio');
+          const skills = e.currentTarget.getAttribute('data-skills').split(',').filter(s => s);
+
+          document.getElementById('candidate-name').innerText = name;
+          document.getElementById('candidate-email').innerText = email;
+          document.getElementById('candidate-bio').innerText = bio;
+
+          const skillsBox = document.getElementById('candidate-skills');
+          skillsBox.innerHTML = '';
+          if (skills.length > 0) {
+            skills.forEach(s => {
+              skillsBox.innerHTML += `<span class="badge-custom badge-custom-internship text-capitalize">${s}</span>`;
+            });
+          } else {
+            skillsBox.innerHTML = '<span class="text-muted text-xs">No skills listed.</span>';
+          }
+
+          const modal = new bootstrap.Modal(document.getElementById('candidateModal'));
+          modal.show();
+        });
+      });
+
+      // Bind Pitch click
+      document.querySelectorAll('.read-pitch-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const pitch = e.currentTarget.getAttribute('data-pitch');
+          document.getElementById('modal-pitch-content').innerText = pitch;
+          const modal = new bootstrap.Modal(document.getElementById('pitchModal'));
+          modal.show();
+        });
+      });
+
+      // Bind Decisions (Accept / Reject)
+      document.querySelectorAll('.action-decision-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          const status = e.currentTarget.getAttribute('data-status');
+          
+          if (!confirm(`Are you sure you want to change candidate application status to ${status}?`)) return;
+
+          loader.show();
+          try {
+            const res = await updateApplicationStatus(id, status);
+            if (res.message && res.message.includes('updated')) {
+              toast.success(`Application ${status}!`);
+              // Sync local state
+              const appIndex = applications.findIndex(a => a._id === id);
+              if (appIndex !== -1) {
+                applications[appIndex].status = status;
+              }
+              renderReviewsTable(); // Re-render
+            } else {
+              toast.error(res.message || 'Status update failed.');
+            }
+          } catch (err) {
+            toast.error('Network error updating application status.');
+          } finally {
+            loader.hide();
+          }
+        });
+      });
+    };
+
+    // Filter Change
+    document.getElementById('filter-opp-select').addEventListener('change', (e) => {
+      filterOpportunityId = e.target.value;
+      renderReviewsTable();
+    });
+
+    // Execute
+    loadReviewPage();
+  </script>
+</body>
+</html>
