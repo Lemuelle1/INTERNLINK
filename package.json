@@ -5,7 +5,8 @@
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
+    "dev": "nodemon backend/server.js",
+    "frontend": "npx http-server frontend -p 3000 -o /index.html"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -21,6 +22,7 @@
     "multer-storage-cloudinary": "^4.0.0"
   },
   "devDependencies": {
+    "http-server": "^14.1.1",
     "nodemon": "^3.0.1"
   }
 }
