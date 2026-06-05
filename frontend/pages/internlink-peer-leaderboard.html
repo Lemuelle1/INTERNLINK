@@ -1215,6 +1215,19 @@ document.querySelectorAll('.team-tab').forEach(tab => {
     this.classList.add('active');
   });
 });
+
+document.querySelectorAll('.nav-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const title = icon.title || icon.textContent.trim();
+    if (title.includes('Home')) window.location.href = '/pages/internlink-design.html';
+    else if (title.includes('Browse')) window.location.href = '/pages/browse.html';
+    else if (title.includes('Applications')) window.location.href = '/pages/dashboard.html';
+    else if (title.includes('Peer Review')) window.location.href = '/pages/internlink-peer-leaderboard.html';
+    else if (title.includes('Teams')) window.location.href = '/pages/internlink-teams-admin.html';
+    else if (title.includes('Leaderboard')) window.location.href = '/pages/internlink-peer-leaderboard.html';
+    else if (title.includes('Profile')) window.location.href = '/pages/profile.html';
+  });
+});
 </script>
 </body>
 </html>

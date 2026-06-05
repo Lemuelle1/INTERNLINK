@@ -331,8 +331,8 @@ body{font-family:var(--font-body);background:var(--c-bg);color:var(--c-text);fon
           </div>
 
           <div class="team-footer">
-            <button class="btn btn-primary btn-sm">Apply to opportunity →</button>
-            <button class="btn btn-ghost btn-sm" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Team workspace</button>
+            <button class="btn btn-primary btn-sm" onclick="window.location.href='/pages/browse.html'">Apply to opportunity →</button>
+            <button class="btn btn-ghost btn-sm" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)" onclick="window.location.href='/pages/internlink-peer-leaderboard.html'">Team workspace</button>
           </div>
         </div>
 
@@ -982,6 +982,87 @@ document.querySelectorAll('.size-opt').forEach(opt => {
 });
 
 function openInvite() {
+  const link = 'https://internlink.example.com/invite/abc123';
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(link).catch(() => {});
+  }
   alert('Invite link copied to clipboard!\nShare it with your 4th team member.');
 }
+
+function handleTeamLinks(link) {
+  const text = link.textContent.trim();
+  const appsTabButton = document.querySelector('.admin-nav-item[onclick*=apps]');
+  if (/View all/i.test(text)) {
+    if (appsTabButton) adminTab(appsTabButton, 'apps');
+    show('admin');
+    return;
+  }
+  if (/See all/i.test(text)) {
+    if (appsTabButton) adminTab(appsTabButton, 'apps');
+    show('admin');
+    return;
+  }
+  if (/Review pending/i.test(text)) {
+    if (appsTabButton) adminTab(appsTabButton, 'apps');
+    show('admin');
+    return;
+  }
+  if (/Export CSV/i.test(text)) {
+    alert('CSV export started. Check your downloads folder.');
+    return;
+  }
+}
+
+document.querySelectorAll('a[href="#"]').forEach(link => {
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    handleTeamLinks(link);
+  });
+});
+
+document.querySelectorAll('.nav-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const title = icon.title || icon.textContent.trim();
+    if (title.includes('Home')) window.location.href = '/pages/internlink-design.html';
+    else if (title.includes('Browse')) window.location.href = '/pages/browse.html';
+    else if (title.includes('Applications')) window.location.href = '/pages/dashboard.html';
+    else if (title.includes('Peer Review')) window.location.href = '/pages/internlink-peer-leaderboard.html';
+    else if (title.includes('Teams')) show('teams');
+    else if (title.includes('Leaderboard')) window.location.href = '/pages/internlink-peer-leaderboard.html';
+    else if (title.includes('Profile')) window.location.href = '/pages/profile.html';
+  });
+});
+
+document.querySelectorAll('.admin-nav-item').forEach(item => {
+  if (!item.hasAttribute('onclick')) {
+    item.addEventListener('click', () => {
+      if (item.textContent.includes('Settings')) {
+        alert('Settings will be available in the next release.');
+      } else if (item.textContent.includes('Notifications')) {
+        alert('No new notifications at the moment.');
+      }
+    });
+  }
+});
+
+const exportCsvBtn = Array.from(document.querySelectorAll('.admin-card button')).find(btn => btn.textContent.includes('Export CSV'));
+if (exportCsvBtn) {
+  exportCsvBtn.addEventListener('click', () => {
+    alert('CSV export started. Check your downloads folder.');
+  });
+}
+
+const reviewPendingBtn = Array.from(document.querySelectorAll('.admin-card button')).find(btn => btn.textContent.includes('Review pending'));
+if (reviewPendingBtn) {
+  reviewPendingBtn.addEventListener('click', () => {
+    adminTab(document.querySelector('[onclick*=apps]'), 'apps');
+    show('admin');
+  });
+}
+
+document.querySelectorAll('.action-btn.view').forEach(btn => {
+  btn.addEventListener('click', () => {
+    alert('Opening application details...');
+  });
+});
 </script>

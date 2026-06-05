@@ -1221,19 +1221,209 @@ body {
 function show(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.page-nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const page = document.getElementById(id);
+  if (!page) return;
+  page.classList.add('active');
   const idx = ['landing','browse','dashboard'].indexOf(id);
-  document.querySelectorAll('.page-nav button')[idx].classList.add('active');
-  window.scrollTo(0,0);
+  if (idx >= 0) {
+    document.querySelectorAll('.page-nav button')[idx].classList.add('active');
+  }
+  if (id === 'browse') {
+    updateBrowseCards();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Filter pills toggle
-document.querySelectorAll('.filter-pill').forEach(pill => {
+const searchInput = document.querySelector('.search-bar input');
+const searchBtn = document.querySelector('.search-bar button');
+const browseSubtitle = document.querySelector('.browse-sub');
+const browseCards = Array.from(document.querySelectorAll('.opp-card'));
+const filterPills = Array.from(document.querySelectorAll('.filter-pill'));
+
+function getActiveFilters() {
+  return filterPills
+    .filter(p => p.classList.contains('active'))
+    .map(p => p.textContent.trim().toLowerCase())
+    .filter(text => text !== 'all');
+}
+
+function updateBrowseCards() {
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  const activeFilters = getActiveFilters();
+  let visible = 0;
+
+  browseCards.forEach(card => {
+    const text = card.textContent.trim().toLowerCase();
+    const matchesSearch = !query || text.includes(query);
+    const matchesFilters = activeFilters.every(filter => text.includes(filter));
+    const showCard = matchesSearch && matchesFilters;
+    card.style.display = showCard ? '' : 'none';
+    if (showCard) visible++;
+  });
+
+  if (browseSubtitle) {
+    browseSubtitle.textContent = `${visible} opportunities match your profile`;
+  }
+}
+
+function handleLinkAction(element) {
+  const text = element.textContent.trim();
+  if (/Opportunities|Find opportunities|Browse opportunities/i.test(text)) {
+    show('browse');
+    return;
+  }
+  if (/For Companies/i.test(text)) {
+    window.location.href = '/pages/admin/dashboard.html';
+    return;
+  }
+  if (/Leaderboard/i.test(text)) {
+    window.location.href = '/pages/internlink-peer-leaderboard.html';
+    return;
+  }
+  if (/About/i.test(text)) {
+    show('landing');
+    return;
+  }
+  if (/Log in/i.test(text)) {
+    window.location.href = '/pages/login.html';
+    return;
+  }
+  if (/Get started/i.test(text)) {
+    window.location.href = '/pages/register.html';
+    return;
+  }
+  if (/Create your profile/i.test(text)) {
+    window.location.href = '/pages/profile.html';
+    return;
+  }
+  if (/Browse opportunities/i.test(text)) {
+    show('browse');
+    return;
+  }
+  if (/Review teammates/i.test(text) || /Leaderboard/i.test(text)) {
+    window.location.href = '/pages/internlink-peer-leaderboard.html';
+    return;
+  }
+  if (/See all/i.test(text)) {
+    window.location.href = '/pages/dashboard.html';
+    return;
+  }
+  if (/View/i.test(text)) {
+    window.location.href = '/pages/internlink-teams-admin.html';
+    return;
+  }
+  if (/Apply as a team/i.test(text)) {
+    window.location.href = '/pages/internlink-teams-admin.html';
+    return;
+  }
+  show('landing');
+}
+
+document.querySelectorAll('a[href="#"]:not(.nav-item)').forEach(link => {
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    handleLinkAction(link);
+  });
+});
+
+const teamInviteButton = document.querySelector('.team-card .btn');
+if (teamInviteButton) {
+  teamInviteButton.addEventListener('click', openInvite);
+}
+
+if (searchBtn && searchInput) {
+  searchBtn.addEventListener('click', event => {
+    event.preventDefault();
+    show('browse');
+    updateBrowseCards();
+  });
+  searchInput.addEventListener('input', updateBrowseCards);
+}
+
+filterPills.forEach(pill => {
   pill.addEventListener('click', function() {
     const group = this.closest('.filter-pills');
+    if (!group) return;
     group.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
     this.classList.add('active');
+    updateBrowseCards();
   });
+});
+
+document.querySelectorAll('.opp-save').forEach(button => {
+  button.addEventListener('click', () => {
+    const saved = button.textContent.trim() === '🤍';
+    button.textContent = saved ? '❤️' : '🤍';
+    button.title = saved ? 'Saved' : 'Save this listing';
+    button.classList.toggle('saved', saved);
+  });
+});
+
+document.querySelectorAll('.opp-footer .btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const card = button.closest('.opp-card');
+    const title = card ? card.querySelector('.opp-title')?.textContent.trim() : 'opportunity';
+    if (!button.dataset.applied) {
+      button.dataset.applied = 'true';
+      button.textContent = 'Applied';
+      button.classList.remove('btn-ghost');
+      button.classList.add('btn-primary');
+      button.disabled = true;
+      setTimeout(() => {
+        button.textContent = 'Apply →';
+        button.disabled = false;
+        delete button.dataset.applied;
+      }, 1800);
+    }
+    alert(`Application started for ${title}.`);
+  });
+});
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', event => {
+    event.preventDefault();
+    const text = item.textContent.trim();
+    if (text.startsWith('Home')) {
+      show('landing');
+    } else if (text.startsWith('Browse')) {
+      show('browse');
+    } else if (text.startsWith('My Applications')) {
+      window.location.href = '/pages/dashboard.html';
+    } else if (text.startsWith('My Teams')) {
+      window.location.href = '/pages/internlink-teams-admin.html';
+    } else if (text.startsWith('Projects')) {
+      window.location.href = '/pages/projects.html';
+    } else if (text.startsWith('Leaderboard')) {
+      window.location.href = '/pages/internlink-peer-leaderboard.html';
+    }
+  });
+});
+
+document.querySelectorAll('.dash-nav-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const title = icon.title || icon.textContent.trim();
+    if (title.includes('Dashboard')) show('dashboard');
+    else if (title.includes('Browse')) show('browse');
+    else if (title.includes('Teams')) window.location.href = '/pages/internlink-teams-admin.html';
+    else if (title.includes('Projects')) window.location.href = '/pages/projects.html';
+    else if (title.includes('Leaderboard')) window.location.href = '/pages/internlink-peer-leaderboard.html';
+    else if (title.includes('Profile')) window.location.href = '/pages/profile.html';
+    else if (title.includes('Settings')) alert('Settings are coming soon.');
+    document.querySelectorAll('.dash-nav-icon').forEach(i => i.classList.remove('active'));
+    icon.classList.add('active');
+  });
+});
+
+function openInvite() {
+  const link = 'https://internlink.example.com/invite/team-alpha';
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(link).catch(() => {});
+  }
+  alert('Invite link copied to clipboard! Share it with your team.');
+}
+
+document.querySelector('.dash-avatar')?.addEventListener('click', () => {
+  window.location.href = '/pages/profile.html';
 });
 </script>
 </body>
