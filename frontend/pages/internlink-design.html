@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InternLink — Design Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+
+:root {
+  --c-bg:        #F5F3EE;
+  --c-surface:   #FFFFFF;
+  --c-dark:      #0F0E0C;
+  --c-primary:   #1A3DFF;
+  --c-accent:    #FF5C1A;
+  --c-success:   #00C87A;
+  --c-warning:   #FFB800;
+  --c-muted:     #8C8A84;
+  --c-border:    #E5E2DB;
+  --c-text:      #1A1916;
+  --c-text-2:    #5C5A55;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.09);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.13);
+}
+
+*,
+ *::before,
+ *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+   align-items: center; 
+   gap: 7px;
+  padding: 12px 24px;
+   border-radius: 100px;
+  font-family: var(--font-body);
+   font-size: 14px; 
+   font-weight: 500;
+  cursor: pointer; 
+  border: none; 
+  text-decoration: none;
+  transition: transform .18s, box-shadow .18s, background .18s;
+  white-space: nowrap;
+}
+.btn:hover {
+   transform: translateY(-1px); }
+.btn-primary {
+   background: var(--c-primary); 
+   color: #fff;
+    box-shadow: 0 4px 16px rgba(26,61,255,.3); }
+.btn-primary:hover { 
+  background: #0A2EE0; 
+  box-shadow: 0 6px 24px rgba(26,61,255,.4); }
+.btn-dark { 
+  background: var(--c-dark);
+   color: #fff; }
+.btn-dark:hover { 
+  background: #2A2924; }
+.btn-ghost { 
+  background: transparent; 
+  color: var(--c-text); 
+  border: 1.5px solid var(--c-border); 
+}
+.btn-ghost:hover {
+   border-color: var(--c-text);
+   background: rgba(0,0,0,.03); }
+.btn-lg { 
+  padding: 16px 32px;
+   font-size: 15px; }
+
+.badge {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 4px;
+  padding: 4px 12px; 
+  border-radius: 100px;
+  font-size: 12px; 
+  font-weight: 500;
+}
+.badge-blue   { background: #EEF1FF; color: #1A3DFF; }
+.badge-green  { background: #E6FBF2; color: #007A49; }
+.badge-orange { background: #FFF0EB; color: #CC3A00; }
+.badge-gray   { background: #F0EEE9; color: #5C5A55; }
+.badge-gold   { background: #FFF8E0; color: #996600; }
+
+/* ═══════════════════════════════════════════════
+   PAGE NAV (tab switcher)
+═══════════════════════════════════════════════ */
+.page-nav {
+  position: fixed; 
+  top: 16px;
+   left: 50%; 
+   transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(15,14,12,.88); 
+  backdrop-filter: blur(12px);
+  border-radius: 100px; 
+  padding: 5px 6px;
+  display: flex; 
+  gap: 2px;
+  box-shadow: var(--shadow-lg);
+}
+.page-nav button {
+  padding: 8px 18px; 
+  border-radius: 100px; 
+  border: none;
+  font-family: var(--font-body);
+  font-size: 13px; 
+  font-weight: 500;
+  cursor: pointer; 
+  transition: all .18s;
+  color: rgba(255,255,255,.55); 
+  background: transparent;
+}
+.page-nav button.active { 
+  background: #fff; 
+  color: var(--c-dark); }
+
+.page { 
+  display: none; }
+.page.active { 
+  display: block; }
+
+/* ═══════════════════════════════════════════════
+    LANDING PAGE
+═══════════════════════════════════════════════ */
+#landing {
+   background: var(--c-bg); 
+   min-height: 100vh; }
+
+/* Top nav */
+.land-nav {
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  padding: 24px 48px; 
+  position: relative; 
+  z-index: 10;
+}
+.land-logo {
+  font-family: var(--font-display); 
+  font-size: 22px; 
+  font-weight: 800;
+  color: var(--c-dark); 
+  letter-spacing: -.03em;
+}
+.land-logo span { color: var(--c-primary); }
+.land-nav-links { display: flex; gap: 32px; align-items: center; }
+.land-nav-links a { font-size: 14px; color: var(--c-text-2); text-decoration: none; transition: color .15s; }
+.land-nav-links a:hover { color: var(--c-text); }
+
+/* Hero */
+.hero {
+  padding: 80px 48px 60px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+  max-width: 1160px; margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 100px; padding: 6px 14px; font-size: 12px;
+  color: var(--c-text-2); margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-success); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+.hero-h1 {
+  font-family: var(--font-display); font-size: clamp(44px, 5vw, 68px);
+  font-weight: 800; line-height: 1.0; letter-spacing: -.04em;
+  color: var(--c-dark); margin-bottom: 24px;
+}
+.hero-h1 .accent { color: var(--c-primary); position: relative; display: inline-block; }
+.hero-h1 .underline-word {
+  position: relative; display: inline-block;
+  background: linear-gradient(135deg, #FF5C1A, #FFB800);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-desc { font-size: 17px; color: var(--c-text-2); line-height: 1.7; margin-bottom: 36px; max-width: 460px; }
+.hero-ctas { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.hero-social-proof {
+  display: flex; align-items: center; gap: 10px; margin-top: 32px;
+}
+.hero-avatars { display: flex; }
+.hero-avatars span {
+  width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--c-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; margin-left: -8px; color: #fff;
+}
+.hero-avatars span:first-child { margin-left: 0; }
+.hero-proof-text { font-size: 13px; color: var(--c-text-2); }
+.hero-proof-text strong { color: var(--c-text); }
+
+/* Hero visual */
+.hero-visual { position: relative; }
+.hero-card-main {
+  background: var(--c-surface); border-radius: var(--r-xl);
+  border: 1px solid var(--c-border); padding: 24px;
+  box-shadow: var(--shadow-lg);
+  animation: float 5s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.hero-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.hero-company-logo {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 16px;
+}
+.hero-card-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+.hero-card-sub { font-size: 13px; color: var(--c-text-2); }
+.hero-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.hero-card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.hero-stat { background: var(--c-bg); border-radius: var(--r-sm); padding: 10px 12px; }
+.hero-stat-num { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+.hero-stat-lbl { font-size: 11px; color: var(--c-muted); }
+
+/* Floating mini cards */
+.float-card {
+  position: absolute; background: var(--c-surface);
+  border: 1px solid var(--c-border); border-radius: var(--r-md);
+  padding: 12px 16px; box-shadow: var(--shadow-md);
+  font-size: 12px;
+}
+.float-card-1 { top: -20px; right: -20px; animation: float2 4s ease-in-out infinite; }
+.float-card-2 { bottom: 20px; left: -30px; animation: float2 6s ease-in-out infinite .5s; }
+@keyframes float2 { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-8px) rotate(1deg)} }
+
+/* Features strip */
+.features {
+  max-width: 1160px; margin: 80px auto; padding: 0 48px;
+}
+.features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.feat-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 28px;
+  transition: transform .2s, box-shadow .2s;
+}
+.feat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.feat-icon {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+}
+.feat-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.feat-desc { font-size: 13px; color: var(--c-text-2); line-height: 1.6; }
+
+/* Stats band */
+.stats-band {
+  background: var(--c-dark); color: #fff;
+  padding: 56px 48px;
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 24px; max-width: 100%;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-display); font-size: 44px; font-weight: 800;
+  line-height: 1; margin-bottom: 6px;
+  background: linear-gradient(135deg, #fff, rgba(255,255,255,.6));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.stat-lbl { font-size: 13px; color: rgba(255,255,255,.5); }
+
+/* CTA section */
+.cta-section {
+  max-width: 800px; margin: 80px auto; padding: 0 48px;
+  text-align: center;
+}
+.cta-section h2 {
+  font-family: var(--font-display); font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800; line-height: 1.1; letter-spacing: -.03em;
+  margin-bottom: 16px;
+}
+.cta-section p { font-size: 17px; color: var(--c-text-2); margin-bottom: 32px; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; }
+
+/* ═══════════════════════════════════════════════
+   ② BROWSE PAGE
+═══════════════════════════════════════════════ */
+#browse { min-height: 100vh; background: var(--c-bg); }
+
+.browse-layout { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.browse-sidebar {
+  width: 260px; flex-shrink: 0; background: var(--c-surface);
+  border-right: 1px solid var(--c-border);
+  padding: 80px 20px 24px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar-logo {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--c-dark); letter-spacing: -.03em; margin-bottom: 32px;
+}
+.sidebar-logo span { color: var(--c-primary); }
+
+.nav-section-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--c-muted);
+  margin: 20px 0 8px; padding: 0 8px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--r-sm);
+  font-size: 14px; color: var(--c-text-2);
+  cursor: pointer; transition: all .15s; margin-bottom: 2px;
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--c-bg); color: var(--c-text); }
+.nav-item.active { background: #EEF1FF; color: var(--c-primary); font-weight: 500; }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-count {
+  margin-left: auto; background: var(--c-bg);
+  font-size: 11px; padding: 1px 7px; border-radius: 100px;
+  color: var(--c-muted);
+}
+.nav-item.active .nav-count { background: #D4DCFF; color: var(--c-primary); }
+
+/* Filters */
+.filter-group { margin-bottom: 24px; }
+.filter-label { font-size: 12px; font-weight: 600; color: var(--c-text); margin-bottom: 10px; }
+.filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-pill {
+  padding: 5px 12px; border-radius: 100px; font-size: 12px;
+  border: 1.5px solid var(--c-border); color: var(--c-text-2);
+  cursor: pointer; transition: all .15s; background: transparent;
+}
+.filter-pill:hover { border-color: var(--c-primary); color: var(--c-primary); }
+.filter-pill.active { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+
+/* Browse main */
+.browse-main { flex: 1; padding: 80px 32px 32px; }
+.browse-header { margin-bottom: 28px; }
+.browse-title { font-family: var(--font-display); font-size: 26px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 4px; }
+.browse-sub { font-size: 13px; color: var(--c-muted); }
+
+/* Search bar */
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--c-surface); border: 1.5px solid var(--c-border);
+  border-radius: 100px; padding: 10px 18px; margin-bottom: 24px;
+  transition: border-color .15s; box-shadow: var(--shadow-sm);
+}
+.search-bar:focus-within { border-color: var(--c-primary); }
+.search-bar input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-family: var(--font-body); font-size: 14px; color: var(--c-text);
+}
+.search-icon { color: var(--c-muted); font-size: 16px; }
+
+/* Opportunity cards grid */
+.opp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.opp-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 22px;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.opp-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: var(--card-accent, #E5E2DB);
+  transition: background .2s;
+}
+.opp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: #D0D0CC; }
+.opp-card:hover::before { background: var(--card-accent-hover, var(--c-primary)); }
+.opp-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.opp-company-logo {
+  width: 42px; height: 42px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 14px; color: #fff;
+  flex-shrink: 0;
+}
+.opp-save {
+  width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--c-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer; transition: all .15s;
+  background: transparent;
+}
+.opp-save:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.opp-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+.opp-company { font-size: 13px; color: var(--c-text-2); margin-bottom: 12px; }
+.opp-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.opp-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--c-border); }
+.opp-deadline { font-size: 11px; color: var(--c-muted); }
+.opp-deadline strong { color: var(--c-text); }
+
+/* Featured card */
+.opp-card.featured {
+  background: var(--c-dark); border-color: transparent;
+  --card-accent: var(--c-primary);
+}
+.opp-card.featured .opp-title { color: #fff; }
+.opp-card.featured .opp-company { color: rgba(255,255,255,.55); }
+.opp-card.featured .opp-footer { border-color: rgba(255,255,255,.1); }
+.opp-card.featured .opp-deadline { color: rgba(255,255,255,.4); }
+.opp-card.featured .opp-deadline strong { color: rgba(255,255,255,.8); }
+.opp-card.featured .opp-save { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.6); }
+
+/* ═══════════════════════════════════════════════
+   ③ DASHBOARD PAGE  (gamified)
+═══════════════════════════════════════════════ */
+#dashboard { min-height: 100vh; background: var(--c-bg); }
+
+.dash-layout { display: flex; min-height: 100vh; }
+
+/* Icon sidebar */
+.dash-sidebar {
+  width: 64px; flex-shrink: 0; background: var(--c-dark);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 80px 0 24px; gap: 6px;
+  position: sticky; top: 0; height: 100vh;
+}
+.dash-logo-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--c-primary); color: #fff;
+  font-family: var(--font-display); font-size: 14px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.dash-nav-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; transition: all .15s;
+  color: rgba(255,255,255,.35);
+}
+.dash-nav-icon:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); }
+.dash-nav-icon.active { background: var(--c-primary); color: #fff; }
+.dash-nav-icon.bottom { margin-top: auto; }
+
+/* Main content */
+.dash-main { flex: 1; padding: 80px 32px 32px; overflow-y: auto; }
+.dash-topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+.dash-greeting { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 2px; }
+.dash-greeting-sub { font-size: 13px; color: var(--c-muted); }
+.dash-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--c-primary); color: #fff;
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 3px solid var(--c-success); cursor: pointer;
+}
+
+/* KPI row */
+.kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+.kpi-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-md); padding: 18px;
+  position: relative; overflow: hidden;
+  transition: transform .2s;
+}
+.kpi-card:hover { transform: translateY(-2px); }
+.kpi-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: var(--kpi-color, var(--c-border));
+}
+.kpi-icon { font-size: 20px; margin-bottom: 10px; }
+.kpi-num {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  letter-spacing: -.03em; color: var(--c-text); margin-bottom: 2px;
+}
+.kpi-lbl { font-size: 12px; color: var(--c-muted); }
+.kpi-change { font-size: 11px; margin-top: 6px; }
+.kpi-up { color: var(--c-success); }
+.kpi-down { color: var(--c-accent); }
+
+/* Gamification row */
+.game-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+/* XP / Level card */
+.xp-card {
+  background: var(--c-dark); border-radius: var(--r-lg); padding: 24px;
+  color: #fff; position: relative; overflow: hidden;
+}
+.xp-card::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,61,255,.4), transparent 70%);
+}
+.xp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.xp-level {
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,.1); border-radius: 100px;
+  padding: 4px 12px; color: rgba(255,255,255,.8);
+}
+.xp-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.xp-sub { font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 20px; }
+.xp-bar-wrap { background: rgba(255,255,255,.1); border-radius: 100px; height: 8px; overflow: hidden; margin-bottom: 8px; }
+.xp-bar { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--c-primary), #22D3EE); width: 72%; }
+.xp-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,.4); }
+
+/* Badges */
+.badges-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 20px;
+}
+.badges-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+.badges-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.badge-item {
+  background: var(--c-bg); border-radius: var(--r-sm); padding: 10px;
+  text-align: center; border: 1px solid var(--c-border); transition: transform .15s;
+}
+.badge-item:hover { transform: scale(1.04); }
+.badge-item.locked { opacity: .4; filter: grayscale(1); }
+.badge-emoji { font-size: 22px; margin-bottom: 4px; }
+.badge-name { font-size: 10px; font-weight: 600; color: var(--c-text-2); }
+
+/* Bottom row */
+.dash-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* Applications list */
+.apps-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 20px;
+}
+.card-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+.card-title a { font-size: 12px; font-weight: 400; color: var(--c-primary); text-decoration: none; }
+.app-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--c-border); }
+.app-item:last-child { border-bottom: none; }
+.app-logo { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.app-info { flex: 1; }
+.app-title { font-size: 13px; font-weight: 500; color: var(--c-text); }
+.app-company { font-size: 11px; color: var(--c-muted); }
+.app-status { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+.status-pending  { background: #FFF8E0; color: #996600; }
+.status-accepted { background: #E6FBF2; color: #007A49; }
+.status-reviewed { background: #EEF1FF; color: #1A3DFF; }
+
+/* Team card */
+.team-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 20px;
+}
+.team-members { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.team-member {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--c-bg); border-radius: 100px;
+  padding: 4px 10px 4px 4px; font-size: 12px;
+}
+.team-member-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #fff;
+}
+.team-skills { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* Peer score card */
+.score-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 20px;
+}
+.score-overall {
+  text-align: center; padding: 16px 0 20px;
+  border-bottom: 1px solid var(--c-border); margin-bottom: 16px;
+}
+.score-num {
+  font-family: var(--font-display); font-size: 52px; font-weight: 800;
+  letter-spacing: -.04em; color: var(--c-success); line-height: 1;
+}
+.score-stars { font-size: 18px; margin: 4px 0; }
+.score-lbl { font-size: 12px; color: var(--c-muted); }
+.score-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.score-row { display: flex; align-items: center; gap: 8px; }
+.score-row-lbl { font-size: 12px; color: var(--c-text-2); width: 90px; flex-shrink: 0; }
+.score-track { flex: 1; background: var(--c-bg); border-radius: 100px; height: 6px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 100px; background: var(--c-success); }
+.score-val { font-size: 11px; font-weight: 600; color: var(--c-text); width: 24px; text-align: right; }
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .land-nav { padding: 20px 24px; }
+  .land-nav-links { display: none; }
+  .hero { padding: 60px 24px 40px; }
+  .features { padding: 0 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .stats-band { grid-template-columns: repeat(2,1fr); padding: 40px 24px; }
+  .cta-section { padding: 0 24px; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .game-row { grid-template-columns: 1fr; }
+  .dash-bottom { grid-template-columns: 1fr; }
+  .browse-sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ PAGE NAV ════════ -->
+<nav class="page-nav" role="navigation" aria-label="Page selector">
+  <button class="active" onclick="show('landing')">🏠 Landing</button>
+  <button onclick="show('browse')">🔍 Browse</button>
+  <button onclick="show('dashboard')">📊 Dashboard</button>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     ① LANDING PAGE
+════════════════════════════════════════════ -->
+<section id="landing" class="page active">
+
+  <!-- Nav -->
+  <nav class="land-nav">
+    <div class="land-logo">Intern<span>Link</span></div>
+    <div class="land-nav-links">
+      <a href="#">Opportunities</a>
+      <a href="#">For Companies</a>
+      <a href="#">Leaderboard</a>
+      <a href="#">About</a>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="#" class="btn btn-ghost" style="padding:9px 20px;font-size:13px">Log in</a>
+      <a href="#" class="btn btn-primary" style="padding:9px 20px;font-size:13px">Get started</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        142 new opportunities this week
+      </div>
+      <h1 class="hero-h1">
+        Land the<br>
+        <span class="underline-word">internship</span><br>
+        you deserve.
+      </h1>
+      <p class="hero-desc">
+        InternLink connects students with real internships and scholarships. Build your team, upload your projects, and apply together — the way real work happens.
+      </p>
+      <div class="hero-ctas">
+        <a href="#" class="btn btn-primary btn-lg">Find opportunities →</a>
+        <a href="#" class="btn btn-ghost btn-lg">For companies</a>
+      </div>
+      <div class="hero-social-proof">
+        <div class="hero-avatars">
+          <span style="background:#1A3DFF">AK</span>
+          <span style="background:#FF5C1A">KM</span>
+          <span style="background:#00C87A">YD</span>
+          <span style="background:#FFB800">SL</span>
+        </div>
+        <div class="hero-proof-text">
+          <strong>2,400+ students</strong> already placed
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <!-- Floating mini card 1 -->
+      <div class="float-card float-card-1">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">🎉</span>
+          <div>
+            <div style="font-weight:600;color:#0F0E0C">Application accepted!</div>
+            <div style="color:#8C8A84;font-size:11px">Google SWE Intern</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main card -->
+      <div class="hero-card-main">
+        <div class="hero-card-header">
+          <div class="hero-company-logo" style="background:#1A3DFF">G</div>
+          <div>
+            <div class="hero-card-title">Software Engineer Intern</div>
+            <div class="hero-card-sub">Google · Remote · 6 months</div>
+          </div>
+          <div style="margin-left:auto">
+            <span class="badge badge-green">Open</span>
+          </div>
+        </div>
+        <div class="hero-card-tags">
+          <span class="badge badge-blue">Python</span>
+          <span class="badge badge-blue">React</span>
+          <span class="badge badge-gray">Remote</span>
+          <span class="badge badge-gold">Team application</span>
+        </div>
+        <div class="hero-card-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-num" style="color:#1A3DFF">34</div>
+            <div class="hero-stat-lbl">applicants</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" style="color:#FF5C1A">12d</div>
+            <div class="hero-stat-lbl">deadline</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" style="color:#00C87A">4</div>
+            <div class="hero-stat-lbl">team slots</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center">Apply as a team →</button>
+      </div>
+
+      <!-- Floating mini card 2 -->
+      <div class="float-card float-card-2">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">⭐</span>
+          <div>
+            <div style="font-weight:600;font-size:12px;color:#0F0E0C">Peer score: 4.8</div>
+            <div style="color:#8C8A84;font-size:11px">Top 5% this month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div style="text-align:center;margin-bottom:40px">
+      <h2 style="font-family:var(--font-display);font-size:clamp(28px,3.5vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px">Everything you need to get hired</h2>
+      <p style="font-size:16px;color:var(--c-text-2);max-width:500px;margin:0 auto">From your first profile to your first day on the job — InternLink has every step covered.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#EEF1FF">🎯</div>
+        <div class="feat-title">Smart matching</div>
+        <div class="feat-desc">Get matched with opportunities that fit your skills, location and availability — no endless scrolling.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#E6FBF2">👥</div>
+        <div class="feat-title">Team applications</div>
+        <div class="feat-desc">Form a team of 3–4 students with complementary skills and apply together to solve real company problems.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#FFF0EB">🏆</div>
+        <div class="feat-title">Peer reviews & leaderboard</div>
+        <div class="feat-desc">Rate your teammates, build your reputation, and rise through the leaderboard rankings.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#FFF8E0">💼</div>
+        <div class="feat-title">Project portfolio</div>
+        <div class="feat-desc">Upload your projects directly to your profile and let your work speak louder than your CV.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#F0EEE9">🎓</div>
+        <div class="feat-title">Scholarships</div>
+        <div class="feat-desc">Browse and apply for scholarships alongside internships — all in one unified platform.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#EEF1FF">📊</div>
+        <div class="feat-title">Progress tracking</div>
+        <div class="feat-desc">Track every application, get status updates in real time, and never miss a deadline again.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-band" style="margin-top:80px">
+    <div class="stat-item">
+      <div class="stat-num">2,400+</div>
+      <div class="stat-lbl">students placed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">380+</div>
+      <div class="stat-lbl">partner companies</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1,200+</div>
+      <div class="stat-lbl">active opportunities</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">94%</div>
+      <div class="stat-lbl">satisfaction rate</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section" style="padding-bottom:100px">
+    <h2>Ready to find your <span style="color:var(--c-primary)">next opportunity?</span></h2>
+    <p>Join thousands of students already building their careers on InternLink.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn btn-dark btn-lg">Create your profile</a>
+      <a href="#" class="btn btn-ghost btn-lg">Browse opportunities</a>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ════════════════════════════════════════════
+     ② BROWSE PAGE
+════════════════════════════════════════════ -->
+<section id="browse" class="page">
+  <div class="browse-layout">
+
+    <!-- Sidebar -->
+    <aside class="browse-sidebar">
+      <div class="sidebar-logo">Intern<span>Link</span></div>
+
+      <div class="nav-section-label">Menu</div>
+      <a class="nav-item" href="#"><span class="nav-icon">🏠</span> Home</a>
+      <a class="nav-item active" href="#"><span class="nav-icon">🔍</span> Browse <span class="nav-count">142</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon">📄</span> My Applications <span class="nav-count">12</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon">👥</span> My Teams <span class="nav-count">2</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon">💼</span> Projects</a>
+      <a class="nav-item" href="#"><span class="nav-icon">🏆</span> Leaderboard</a>
+
+      <div style="margin-top:24px">
+        <div class="filter-label">Type</div>
+        <div class="filter-pills">
+          <button class="filter-pill active">All</button>
+          <button class="filter-pill">Internship</button>
+          <button class="filter-pill">Scholarship</button>
+        </div>
+      </div>
+
+      <div class="filter-group" style="margin-top:20px">
+        <div class="filter-label">Location</div>
+        <div class="filter-pills">
+          <button class="filter-pill active">Remote</button>
+          <button class="filter-pill">On-site</button>
+          <button class="filter-pill">Hybrid</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">Duration</div>
+        <div class="filter-pills">
+          <button class="filter-pill">1–3 months</button>
+          <button class="filter-pill active">3–6 months</button>
+          <button class="filter-pill">6+ months</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">Application</div>
+        <div class="filter-pills">
+          <button class="filter-pill active">Individual</button>
+          <button class="filter-pill">Team</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="browse-main">
+      <div class="browse-header">
+        <h1 class="browse-title">Browse opportunities</h1>
+        <p class="browse-sub">142 opportunities match your profile</p>
+      </div>
+
+      <!-- Search -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search by role, company or skill…" />
+        <button class="btn btn-primary" style="padding:8px 18px;font-size:13px">Search</button>
+      </div>
+
+      <!-- Cards grid -->
+      <div class="opp-grid">
+
+        <!-- Featured -->
+        <div class="opp-card featured" style="--card-accent-hover:#1A3DFF">
+          <div class="opp-card-header">
+            <div class="opp-company-logo" style="background:#1A3DFF">G</div>
+            <div style="margin-left:8px;flex:1">
+              <div class="opp-title">Software Engineer Intern</div>
+              <div class="opp-company">Google · Remote</div>
+            </div>
+            <button class="opp-save">🤍</button>
+          </div>
+          <div class="opp-tags">
+            <span class="badge badge-blue">Python</span>
+            <span class="badge badge-blue">React</span>
+            <span class="badge badge-gold" style="background:rgba(255,184,0,.15);color:#FFB800">Featured</span>
+          </div>
+          <div class="opp-footer">
+            <div class="opp-deadline">Deadline <strong>12 days</strong></div>
+            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px">Apply →</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="opp-card" style="--card-accent-hover:#FF5C1A">
+          <div class="opp-card-header">
+            <div class="opp-company-logo" style="background:#FF5C1A">M</div>
+            <div style="margin-left:8px;flex:1">
+              <div class="opp-title">Data Analyst Intern</div>
+              <div class="opp-company">McKinsey & Co · Paris</div>
+            </div>
+            <button class="opp-save">🤍</button>
+          </div>
+          <div class="opp-tags">
+            <span class="badge badge-blue">SQL</span>
+            <span class="badge badge-blue">Python</span>
+            <span class="badge badge-gray">On-site</span>
+          </div>
+          <div class="opp-footer">
+            <div class="opp-deadline">Deadline <strong>20 days</strong></div>
+            <button class="btn btn-ghost" style="padding:7px 16px;font-size:12px">Apply →</button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="opp-card" style="--card-accent-hover:#00C87A">
+          <div class="opp-card-header">
+            <div class="opp-company-logo" style="background:#00C87A">S</div>
+            <div style="margin-left:8px;flex:1">
+              <div class="opp-title">UX Design Intern</div>
+              <div class="opp-company">Spotify · Remote</div>
+            </div>
+            <button class="opp-save">❤️</button>
+          </div>
+          <div class="opp-tags">
+            <span class="badge badge-blue">Figma</span>
+            <span class="badge badge-blue">User Research</span>
+            <span class="badge badge-gold">Team</span>
+          </div>
+          <div class="opp-footer">
+            <div class="opp-deadline">Deadline <strong>8 days</strong></div>
+            <button class="btn btn-ghost" style="padding:7px 16px;font-size:12px">Apply →</button>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="opp-card" style="--card-accent-hover:#FFB800">
+          <div class="opp-card-header">
+            <div class="opp-company-logo" style="background:#FFB800">A</div>
+            <div style="margin-left:8px;flex:1">
+              <div class="opp-title">AI Research Intern</div>
+              <div class="opp-company">Anthropic · Remote</div>
+            </div>
+            <button class="opp-save">🤍</button>
+          </div>
+          <div class="opp-tags">
+            <span class="badge badge-blue">ML</span>
+            <span class="badge badge-blue">PyTorch</span>
+            <span class="badge badge-green">New</span>
+          </div>
+          <div class="opp-footer">
+            <div class="opp-deadline">Deadline <strong>30 days</strong></div>
+            <button class="btn btn-ghost" style="padding:7px 16px;font-size:12px">Apply →</button>
+          </div>
+        </div>
+
+        <!-- Card 5 – Scholarship -->
+        <div class="opp-card" style="--card-accent-hover:#7C3AED">
+          <div class="opp-card-header">
+            <div class="opp-company-logo" style="background:#7C3AED">U</div>
+            <div style="margin-left:8px;flex:1">
+              <div class="opp-title">STEM Excellence Scholarship</div>
+              <div class="opp-company">UNESCO · International</div>
+            </div>
+            <button class="opp-save">🤍</button>
+          </div>
+          <div class="opp-tags">
+            <span class="badge" style="background:#F3E8FF;color:#6B21A8">Scholarship</span>
+            <span class="badge badge-gray">€5,000</span>
+          </div>
+          <div class="opp-footer">
+            <div class="opp-deadline">Deadline <strong>45 days</strong></div>
+            <button class="btn btn-ghost" style="padding:7px 16px;font-size:12px">Apply →</button>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="opp-card" style="--card-accent-hover:#0F0E0C">
+          <div class="opp-card-header">
+            <div class="opp-company-logo" style="background:#0F0E0C">N</div>
+            <div style="margin-left:8px;flex:1">
+              <div class="opp-title">Product Management Intern</div>
+              <div class="opp-company">Netflix · Los Gatos</div>
+            </div>
+            <button class="opp-save">🤍</button>
+          </div>
+          <div class="opp-tags">
+            <span class="badge badge-blue">Agile</span>
+            <span class="badge badge-blue">Analytics</span>
+            <span class="badge badge-gold">Team</span>
+          </div>
+          <div class="opp-footer">
+            <div class="opp-deadline">Deadline <strong>18 days</strong></div>
+            <button class="btn btn-ghost" style="padding:7px 16px;font-size:12px">Apply →</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════
+     ③ DASHBOARD PAGE
+════════════════════════════════════════════ -->
+<section id="dashboard" class="page">
+  <div class="dash-layout">
+
+    <!-- Icon sidebar -->
+    <aside class="dash-sidebar">
+      <div class="dash-logo-icon">IL</div>
+      <div class="dash-nav-icon active" title="Dashboard">🏠</div>
+      <div class="dash-nav-icon" title="Browse">🔍</div>
+      <div class="dash-nav-icon" title="Teams">👥</div>
+      <div class="dash-nav-icon" title="Projects">💼</div>
+      <div class="dash-nav-icon" title="Leaderboard">🏆</div>
+      <div class="dash-nav-icon bottom" title="Profile">👤</div>
+      <div class="dash-nav-icon" title="Settings">⚙️</div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="dash-main">
+      <!-- Top bar -->
+      <div class="dash-topbar">
+        <div>
+          <div class="dash-greeting">Good morning, Amara 👋</div>
+          <div class="dash-greeting-sub">You have 3 pending reviews and 2 new opportunities matching your profile.</div>
+        </div>
+        <div class="dash-avatar" title="Amara Koné">AK</div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="kpi-row">
+        <div class="kpi-card" style="--kpi-color:var(--c-primary)">
+          <div class="kpi-icon">📄</div>
+          <div class="kpi-num">12</div>
+          <div class="kpi-lbl">Applications</div>
+          <div class="kpi-change kpi-up">↑ 3 this week</div>
+        </div>
+        <div class="kpi-card" style="--kpi-color:var(--c-success)">
+          <div class="kpi-icon">⭐</div>
+          <div class="kpi-num" style="color:var(--c-success)">4.7</div>
+          <div class="kpi-lbl">Peer score</div>
+          <div class="kpi-change kpi-up">↑ +0.2 this month</div>
+        </div>
+        <div class="kpi-card" style="--kpi-color:var(--c-accent)">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-num">2</div>
+          <div class="kpi-lbl">Active teams</div>
+          <div class="kpi-change" style="color:var(--c-muted)">1 forming</div>
+        </div>
+        <div class="kpi-card" style="--kpi-color:var(--c-warning)">
+          <div class="kpi-icon">🏆</div>
+          <div class="kpi-num" style="color:var(--c-warning)">#4</div>
+          <div class="kpi-lbl">Leaderboard rank</div>
+          <div class="kpi-change kpi-up">↑ from #7</div>
+        </div>
+      </div>
+
+      <!-- Gamification row -->
+      <div class="game-row">
+        <!-- XP card -->
+        <div class="xp-card">
+          <div class="xp-header">
+            <div>
+              <div class="xp-title">Level 8 — Rising Star 🚀</div>
+              <div class="xp-sub">1,440 / 2,000 XP to Level 9</div>
+            </div>
+            <div class="xp-level">Level 8</div>
+          </div>
+          <div class="xp-bar-wrap">
+            <div class="xp-bar"></div>
+          </div>
+          <div class="xp-bar-labels">
+            <span>1,440 XP</span>
+            <span>560 XP to go</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+            <span class="badge" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)">🔥 7-day streak</span>
+            <span class="badge" style="background:rgba(0,200,122,.15);color:#4ADE80">+50 XP peer review</span>
+            <span class="badge" style="background:rgba(26,61,255,.2);color:#93A8FF">+100 XP team apply</span>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="badges-card">
+          <div class="badges-title">🏅 Achievements</div>
+          <div class="badges-grid">
+            <div class="badge-item">
+              <div class="badge-emoji">🏆</div>
+              <div class="badge-name">Top Reviewer</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-emoji">🔥</div>
+              <div class="badge-name">7-Day Streak</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-emoji">👥</div>
+              <div class="badge-name">Team Player</div>
+            </div>
+            <div class="badge-item locked">
+              <div class="badge-emoji">🌟</div>
+              <div class="badge-name">Top 3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom row -->
+      <div class="dash-bottom">
+
+        <!-- Applications -->
+        <div class="apps-card">
+          <div class="card-title">
+            My applications
+            <a href="#">See all →</a>
+          </div>
+          <div class="app-item">
+            <div class="app-logo" style="background:#1A3DFF">G</div>
+            <div class="app-info">
+              <div class="app-title">SWE Intern · Google</div>
+              <div class="app-company">Team application</div>
+            </div>
+            <span class="app-status status-reviewed">Reviewed</span>
+          </div>
+          <div class="app-item">
+            <div class="app-logo" style="background:#00C87A">S</div>
+            <div class="app-info">
+              <div class="app-title">UX Intern · Spotify</div>
+              <div class="app-company">Individual</div>
+            </div>
+            <span class="app-status status-accepted">Accepted</span>
+          </div>
+          <div class="app-item">
+            <div class="app-logo" style="background:#FFB800">A</div>
+            <div class="app-info">
+              <div class="app-title">AI Intern · Anthropic</div>
+              <div class="app-company">Team application</div>
+            </div>
+            <span class="app-status status-pending">Pending</span>
+          </div>
+          <div class="app-item">
+            <div class="app-logo" style="background:#7C3AED">U</div>
+            <div class="app-info">
+              <div class="app-title">STEM Scholarship</div>
+              <div class="app-company">Individual</div>
+            </div>
+            <span class="app-status status-pending">Pending</span>
+          </div>
+        </div>
+
+        <!-- Team -->
+        <div class="team-card">
+          <div class="card-title">
+            Team Alpha
+            <a href="#">View →</a>
+          </div>
+          <div style="font-size:12px;color:var(--c-muted);margin-bottom:12px">Applying to Google SWE Intern</div>
+          <div class="team-members">
+            <div class="team-member">
+              <div class="team-member-avatar" style="background:#1A3DFF">AK</div>
+              You
+            </div>
+            <div class="team-member">
+              <div class="team-member-avatar" style="background:#FF5C1A">KM</div>
+              Kofi
+            </div>
+            <div class="team-member">
+              <div class="team-member-avatar" style="background:#00C87A">YD</div>
+              Yasmine
+            </div>
+          </div>
+          <div class="filter-label" style="margin-bottom:8px">Team skills</div>
+          <div class="team-skills">
+            <span class="badge badge-blue">React</span>
+            <span class="badge badge-blue">Python</span>
+            <span class="badge badge-green">Figma</span>
+            <span class="badge badge-gray">SQL</span>
+          </div>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:16px;font-size:13px">+ Invite member</button>
+        </div>
+
+        <!-- Peer score -->
+        <div class="score-card">
+          <div class="card-title">Peer score</div>
+          <div class="score-overall">
+            <div class="score-num">4.7</div>
+            <div class="score-stars">⭐⭐⭐⭐⭐</div>
+            <div class="score-lbl">Based on 9 reviews</div>
+          </div>
+          <div class="score-breakdown">
+            <div class="score-row">
+              <div class="score-row-lbl">Communication</div>
+              <div class="score-track"><div class="score-fill" style="width:96%"></div></div>
+              <div class="score-val">4.8</div>
+            </div>
+            <div class="score-row">
+              <div class="score-row-lbl">Technical</div>
+              <div class="score-track"><div class="score-fill" style="width:88%"></div></div>
+              <div class="score-val">4.4</div>
+            </div>
+            <div class="score-row">
+              <div class="score-row-lbl">Reliability</div>
+              <div class="score-track"><div class="score-fill" style="width:98%"></div></div>
+              <div class="score-val">4.9</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:16px;font-size:13px">Review teammates →</button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</section>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['landing','browse','dashboard'].indexOf(id);
+  document.querySelectorAll('.page-nav button')[idx].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// Filter pills toggle
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    const group = this.closest('.filter-pills');
+    group.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

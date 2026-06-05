@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InternLink — Peer Review & Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS  (same system as main file)
+═══════════════════════════════════════════ */
+:root {
+  --c-bg:       #F5F3EE;
+  --c-surface:  #FFFFFF;
+  --c-dark:     #0F0E0C;
+  --c-primary:  #1A3DFF;
+  --c-accent:   #FF5C1A;
+  --c-success:  #00C87A;
+  --c-warning:  #FFB800;
+  --c-muted:    #8C8A84;
+  --c-border:   #E5E2DB;
+  --c-text:     #1A1916;
+  --c-text-2:   #5C5A55;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.09);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.13);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE SWITCHER
+═══════════════════════════════════════════ */
+.page-nav {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(15,14,12,.88); backdrop-filter: blur(12px);
+  border-radius: 100px; padding: 5px 6px;
+  display: flex; gap: 2px;
+  box-shadow: var(--shadow-lg);
+}
+.page-nav button {
+  padding: 8px 18px; border-radius: 100px; border: none;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .18s;
+  color: rgba(255,255,255,.5); background: transparent;
+}
+.page-nav button.active { background: #fff; color: var(--c-dark); }
+.page { display: none; }
+.page.active { display: flex; min-height: 100vh; }
+
+/* ═══════════════════════════════════════════
+   SHARED SIDEBAR
+═══════════════════════════════════════════ */
+.sidebar {
+  width: 64px; flex-shrink: 0; background: var(--c-dark);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 88px 0 24px; gap: 6px;
+  position: sticky; top: 0; height: 100vh;
+}
+.sidebar-logo {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--c-primary); color: #fff;
+  font-family: var(--font-display); font-size: 14px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.nav-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; transition: all .15s;
+  color: rgba(255,255,255,.3); text-decoration: none;
+  border: none; background: transparent;
+}
+.nav-icon:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); }
+.nav-icon.active { background: var(--c-primary); color: #fff; }
+.nav-icon.bottom { margin-top: auto; }
+
+/* ═══════════════════════════════════════════
+   SHARED UTILS
+═══════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 22px; border-radius: 100px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; border: none; text-decoration: none;
+  transition: transform .18s, box-shadow .18s, background .18s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--c-primary); color: #fff; box-shadow: 0 4px 16px rgba(26,61,255,.28); }
+.btn-primary:hover { background: #0A2EE0; }
+.btn-ghost { background: transparent; color: var(--c-text); border: 1.5px solid var(--c-border); }
+.btn-ghost:hover { border-color: var(--c-text); }
+.btn-success { background: var(--c-success); color: #fff; box-shadow: 0 4px 14px rgba(0,200,122,.3); }
+.btn-sm { padding: 7px 16px; font-size: 13px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 500;
+}
+.badge-blue   { background: #EEF1FF; color: #1A3DFF; }
+.badge-green  { background: #E6FBF2; color: #007A49; }
+.badge-orange { background: #FFF0EB; color: #CC3A00; }
+.badge-gray   { background: #F0EEE9; color: #5C5A55; }
+.badge-gold   { background: #FFF8E0; color: #996600; }
+
+.card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 24px;
+}
+
+.page-main { flex: 1; padding: 88px 36px 48px; overflow-y: auto; max-width: 1100px; }
+.page-header { margin-bottom: 32px; }
+.page-title {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  letter-spacing: -.04em; margin-bottom: 4px;
+}
+.page-sub { font-size: 13px; color: var(--c-muted); }
+
+/* ═══════════════════════════════════════════════════
+   ① PEER REVIEW PAGE
+═══════════════════════════════════════════════════ */
+.review-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+
+/* Team selector tabs */
+.team-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.team-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 100px;
+  border: 1.5px solid var(--c-border);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all .15s; background: var(--c-surface);
+  color: var(--c-text-2);
+}
+.team-tab:hover { border-color: var(--c-primary); color: var(--c-primary); }
+.team-tab.active { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+.team-tab-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+
+/* Reviewer card */
+.reviewer-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 24px;
+  margin-bottom: 16px; transition: box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.reviewer-card.done { opacity: .65; }
+.reviewer-card.done::after {
+  content: '✓ Submitted'; position: absolute;
+  top: 14px; right: 14px;
+  background: var(--c-success); color: #fff;
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 100px;
+}
+.reviewer-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background: var(--rc-color, var(--c-border));
+  border-radius: 4px 0 0 4px;
+}
+
+.reviewer-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+}
+.reviewer-avatar {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: #fff;
+}
+.reviewer-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+.reviewer-role { font-size: 12px; color: var(--c-muted); margin-top: 1px; }
+.reviewer-skills { display: flex; gap: 5px; margin-top: 5px; }
+
+/* Star rating */
+.rating-section { margin-bottom: 20px; }
+.rating-label {
+  font-size: 12px; font-weight: 600; color: var(--c-text-2);
+  text-transform: uppercase; letter-spacing: .06em;
+  margin-bottom: 12px;
+}
+.criteria-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--c-border);
+}
+.criteria-row:last-child { border-bottom: none; }
+.criteria-name { font-size: 13px; color: var(--c-text); width: 110px; flex-shrink: 0; }
+.criteria-icon { font-size: 16px; width: 24px; text-align: center; }
+.stars { display: flex; gap: 4px; }
+.star {
+  font-size: 22px; cursor: pointer; transition: transform .12s;
+  color: #E5E2DB; user-select: none;
+}
+.star:hover, .star.lit { color: var(--c-warning); transform: scale(1.15); }
+.star.lit { animation: starPop .2s ease; }
+@keyframes starPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1.15); }
+}
+.criteria-score {
+  margin-left: auto; font-family: var(--font-display);
+  font-size: 18px; font-weight: 700; color: var(--c-warning);
+  min-width: 28px; text-align: right;
+}
+
+/* Comment box */
+.comment-box {
+  width: 100%; min-height: 90px; padding: 12px 14px;
+  border: 1.5px solid var(--c-border); border-radius: var(--r-md);
+  font-family: var(--font-body); font-size: 13px; color: var(--c-text);
+  background: var(--c-bg); resize: vertical; outline: none;
+  transition: border-color .15s;
+}
+.comment-box:focus { border-color: var(--c-primary); background: var(--c-surface); }
+.comment-box::placeholder { color: var(--c-muted); }
+
+.submit-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 16px;
+}
+.char-count { font-size: 12px; color: var(--c-muted); }
+
+/* Right panel — Summary */
+.review-summary { position: sticky; top: 88px; }
+
+.summary-card {
+  background: var(--c-dark); color: #fff;
+  border-radius: var(--r-lg); padding: 24px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.summary-card::before {
+  content: ''; position: absolute;
+  top: -80px; right: -80px; width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,61,255,.35), transparent 65%);
+  pointer-events: none;
+}
+.summary-title {
+  font-family: var(--font-display); font-size: 14px; font-weight: 600;
+  color: rgba(255,255,255,.55); margin-bottom: 20px;
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.summary-progress { margin-bottom: 20px; }
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: rgba(255,255,255,.5); margin-bottom: 6px;
+}
+.progress-track {
+  background: rgba(255,255,255,.1); border-radius: 100px;
+  height: 6px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--c-primary), #22D3EE);
+  transition: width .6s cubic-bezier(.34,1.56,.64,1);
+}
+
+.summary-members { display: flex; flex-direction: column; gap: 8px; }
+.summary-member {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--r-sm);
+  background: rgba(255,255,255,.05); border: 0.5px solid rgba(255,255,255,.08);
+}
+.summary-member-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.summary-member-name { font-size: 13px; color: rgba(255,255,255,.8); flex: 1; }
+.summary-member-status { font-size: 11px; }
+.status-done-sm { color: var(--c-success); }
+.status-pending-sm { color: rgba(255,255,255,.3); }
+
+/* XP reward */
+.xp-reward {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.xp-icon {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  background: linear-gradient(135deg, #FFB800, #FF5C1A);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.xp-text-title { font-size: 14px; font-weight: 600; color: var(--c-text); }
+.xp-text-sub { font-size: 12px; color: var(--c-muted); }
+
+/* Guidelines */
+.guidelines {
+  background: #EEF1FF; border: 1px solid #C7D2FE;
+  border-radius: var(--r-md); padding: 16px; margin-top: 16px;
+}
+.guidelines-title { font-size: 12px; font-weight: 600; color: var(--c-primary); margin-bottom: 8px; }
+.guidelines li { font-size: 12px; color: #3B4FB8; margin-left: 14px; margin-bottom: 4px; }
+
+/* ═══════════════════════════════════════════════════
+   ② LEADERBOARD PAGE
+═══════════════════════════════════════════════════ */
+.lb-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+
+/* Podium */
+.podium {
+  background: var(--c-dark); border-radius: var(--r-xl);
+  padding: 36px 24px 28px; margin-bottom: 24px;
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: center; gap: 12px;
+}
+.podium::before {
+  content: '';  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(26,61,255,.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 0%, rgba(255,92,26,.2) 0%, transparent 55%);
+  pointer-events: none;
+}
+.podium-item { display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; z-index: 1; }
+.podium-item.first { margin-bottom: 24px; }
+.podium-item.second { margin-bottom: 8px; }
+.podium-item.third { margin-bottom: 0; }
+
+.podium-crown { font-size: 22px; margin-bottom: 6px; animation: sway 3s ease-in-out infinite; }
+@keyframes sway { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)} }
+
+.podium-avatar {
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; color: #fff;
+  border: 3px solid rgba(255,255,255,.15); margin-bottom: 10px;
+}
+.podium-item.first  .podium-avatar { width: 68px; height: 68px; font-size: 22px; border-color: var(--c-warning); }
+.podium-item.second .podium-avatar { width: 54px; height: 54px; font-size: 17px; border-color: #C0C0C0; }
+.podium-item.third  .podium-avatar { width: 48px; height: 48px; font-size: 15px; border-color: #CD7F32; }
+
+.podium-name { font-family: var(--font-display); font-weight: 700; color: #fff; text-align: center; margin-bottom: 2px; }
+.podium-item.first  .podium-name { font-size: 15px; }
+.podium-item.second .podium-name { font-size: 13px; }
+.podium-item.third  .podium-name { font-size: 12px; }
+
+.podium-score { font-size: 11px; color: rgba(255,255,255,.5); text-align: center; margin-bottom: 8px; }
+.podium-item.first .podium-score { color: var(--c-warning); font-weight: 600; font-size: 12px; }
+
+.podium-block {
+  border-radius: 8px 8px 0 0; width: 90px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 20px; color: rgba(255,255,255,.4);
+}
+.podium-item.first  .podium-block { height: 70px; background: rgba(255,184,0,.2); border: 1px solid rgba(255,184,0,.3); }
+.podium-item.second .podium-block { height: 50px; background: rgba(192,192,192,.12); border: 1px solid rgba(192,192,192,.2); }
+.podium-item.third  .podium-block { height: 36px; background: rgba(205,127,50,.12); border: 1px solid rgba(205,127,50,.2); }
+
+/* Leaderboard table */
+.lb-table-wrap {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.lb-table-header {
+  display: grid; grid-template-columns: 44px 1fr 90px 90px 80px 90px;
+  padding: 12px 20px; background: var(--c-bg);
+  border-bottom: 1px solid var(--c-border);
+  font-size: 11px; font-weight: 600; color: var(--c-muted);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.lb-row {
+  display: grid; grid-template-columns: 44px 1fr 90px 90px 80px 90px;
+  padding: 14px 20px; border-bottom: 1px solid var(--c-border);
+  align-items: center; transition: background .15s; cursor: pointer;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-row:hover { background: var(--c-bg); }
+.lb-row.me { background: #EEF1FF; }
+.lb-row.me:hover { background: #E4E9FF; }
+
+.lb-rank {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  color: var(--c-muted); text-align: center;
+}
+.lb-rank.gold   { color: var(--c-warning); }
+.lb-rank.silver { color: #999; }
+.lb-rank.bronze { color: #B87333; }
+
+.lb-user { display: flex; align-items: center; gap: 10px; }
+.lb-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700; color: #fff;
+}
+.lb-name { font-size: 13px; font-weight: 500; color: var(--c-text); }
+.lb-skills { display: flex; gap: 4px; margin-top: 2px; }
+.lb-skill { font-size: 10px; background: var(--c-bg); color: var(--c-muted); padding: 1px 6px; border-radius: 100px; }
+
+.lb-score-cell {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+}
+.lb-stars { font-size: 11px; color: var(--c-warning); }
+.lb-num { font-size: 13px; font-weight: 500; color: var(--c-text); }
+.lb-badge-cell { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.me-tag {
+  font-size: 10px; font-weight: 600; background: var(--c-primary);
+  color: #fff; padding: 1px 7px; border-radius: 100px; margin-left: 6px;
+}
+
+/* Score bar in table */
+.mini-score-bar { display: flex; align-items: center; gap: 6px; }
+.mini-bar-track { flex: 1; background: var(--c-bg); border-radius: 100px; height: 5px; overflow: hidden; }
+.mini-bar-fill { height: 100%; border-radius: 100px; background: var(--c-success); }
+
+/* Right panel — Leaderboard */
+.lb-right { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 16px; }
+
+.my-rank-card {
+  background: var(--c-primary); color: #fff;
+  border-radius: var(--r-lg); padding: 22px;
+  position: relative; overflow: hidden;
+}
+.my-rank-card::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.15), transparent 65%);
+}
+.my-rank-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .08em; color: rgba(255,255,255,.6); margin-bottom: 6px;
+}
+.my-rank-num {
+  font-family: var(--font-display); font-size: 52px; font-weight: 800;
+  line-height: 1; letter-spacing: -.04em; margin-bottom: 4px;
+}
+.my-rank-change { font-size: 13px; color: rgba(255,255,255,.7); }
+.my-rank-change strong { color: #fff; }
+
+.rank-progress-wrap { margin-top: 16px; }
+.rank-progress-label {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: rgba(255,255,255,.55); margin-bottom: 6px;
+}
+.rank-progress-track { background: rgba(255,255,255,.15); border-radius: 100px; height: 6px; overflow: hidden; }
+.rank-progress-fill { height: 100%; background: rgba(255,255,255,.8); border-radius: 100px; width: 62%; }
+
+/* Skill breakdown card */
+.skill-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: 20px;
+}
+.skill-card-title {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  margin-bottom: 16px;
+}
+.skill-row { margin-bottom: 12px; }
+.skill-row-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.skill-row-name { font-size: 12px; font-weight: 500; color: var(--c-text-2); }
+.skill-row-val { font-size: 12px; font-weight: 600; color: var(--c-text); }
+.skill-track { background: var(--c-bg); border-radius: 100px; height: 6px; overflow: hidden; }
+.skill-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+
+/* Filters row */
+.lb-filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.lb-filter {
+  padding: 7px 16px; border-radius: 100px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--c-border); background: var(--c-surface);
+  color: var(--c-text-2); cursor: pointer; transition: all .15s;
+}
+.lb-filter:hover { border-color: var(--c-primary); color: var(--c-primary); }
+.lb-filter.active { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+
+/* Animate rows in */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lb-row { animation: slideUp .3s ease both; }
+.lb-row:nth-child(1) { animation-delay: .05s; }
+.lb-row:nth-child(2) { animation-delay: .10s; }
+.lb-row:nth-child(3) { animation-delay: .15s; }
+.lb-row:nth-child(4) { animation-delay: .20s; }
+.lb-row:nth-child(5) { animation-delay: .25s; }
+.lb-row:nth-child(6) { animation-delay: .30s; }
+.lb-row:nth-child(7) { animation-delay: .35s; }
+.lb-row:nth-child(8) { animation-delay: .40s; }
+
+@media (max-width: 900px) {
+  .review-layout, .lb-layout { grid-template-columns: 1fr; }
+  .review-summary, .lb-right { position: static; }
+  .lb-table-header, .lb-row { grid-template-columns: 40px 1fr 70px 70px; }
+  .lb-table-header > :nth-child(5),
+  .lb-table-header > :nth-child(6),
+  .lb-row > :nth-child(5),
+  .lb-row > :nth-child(6) { display: none; }
+  .sidebar { display: none; }
+  .page-main { padding: 80px 20px 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE NAV -->
+<nav class="page-nav">
+  <button class="active" onclick="show('peer')">⭐ Peer Review</button>
+  <button onclick="show('lb')">🏆 Leaderboard</button>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════
+     ① PEER REVIEW PAGE
+══════════════════════════════════════════════════ -->
+<section id="peer" class="page active">
+  <aside class="sidebar">
+    <div class="sidebar-logo">IL</div>
+    <a class="nav-icon" title="Home">🏠</a>
+    <a class="nav-icon" title="Browse">🔍</a>
+    <a class="nav-icon" title="Applications">📄</a>
+    <a class="nav-icon active" title="Peer Review">⭐</a>
+    <a class="nav-icon" title="Teams">👥</a>
+    <a class="nav-icon" title="Leaderboard">🏆</a>
+    <a class="nav-icon bottom" title="Profile">👤</a>
+  </aside>
+
+  <main class="page-main">
+    <div class="page-header">
+      <h1 class="page-title">Peer Reviews</h1>
+      <p class="page-sub">Rate your teammates honestly — your feedback shapes their career profile.</p>
+    </div>
+
+    <!-- Team tabs -->
+    <div class="team-tabs">
+      <button class="team-tab active">
+        <span class="team-tab-dot" style="background:#1A3DFF"></span>
+        Team Alpha
+        <span class="badge badge-orange" style="font-size:10px;padding:1px 7px">2 pending</span>
+      </button>
+      <button class="team-tab">
+        <span class="team-tab-dot" style="background:#00C87A"></span>
+        Team Nexus
+        <span class="badge badge-green" style="font-size:10px;padding:1px 7px">All done</span>
+      </button>
+    </div>
+
+    <div class="review-layout">
+      <!-- Left: reviewer cards -->
+      <div>
+
+        <!-- Teammate 1 — pending -->
+        <div class="reviewer-card" style="--rc-color:#FF5C1A" id="card-kofi">
+          <div class="reviewer-header">
+            <div class="reviewer-avatar" style="background:#FF5C1A">KM</div>
+            <div>
+              <div class="reviewer-name">Kofi Mensah</div>
+              <div class="reviewer-role">Backend Developer · Team Alpha</div>
+              <div class="reviewer-skills">
+                <span class="badge badge-blue">Node.js</span>
+                <span class="badge badge-blue">MongoDB</span>
+              </div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div style="font-size:11px;color:var(--c-muted)">Your relationship</div>
+              <div style="font-size:12px;font-weight:600;color:var(--c-text)">3 projects together</div>
+            </div>
+          </div>
+
+          <div class="rating-label">Rate Kofi's performance</div>
+          <div class="rating-section">
+            <div class="criteria-row">
+              <span class="criteria-icon">💬</span>
+              <span class="criteria-name">Communication</span>
+              <div class="stars" data-card="kofi" data-criteria="comm">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <span class="criteria-score" id="kofi-comm-score">—</span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-icon">⚙️</span>
+              <span class="criteria-name">Technical skill</span>
+              <div class="stars" data-card="kofi" data-criteria="tech">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <span class="criteria-score" id="kofi-tech-score">—</span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-icon">🤝</span>
+              <span class="criteria-name">Reliability</span>
+              <div class="stars" data-card="kofi" data-criteria="rel">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <span class="criteria-score" id="kofi-rel-score">—</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom:4px">
+            <label style="font-size:12px;font-weight:600;color:var(--c-text-2);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">
+              Comment <span style="font-weight:400;text-transform:none;color:var(--c-muted)">(optional)</span>
+            </label>
+            <textarea class="comment-box" id="kofi-comment" placeholder="Share specific feedback — what did Kofi do particularly well or could improve?"></textarea>
+          </div>
+          <div class="submit-row">
+            <span class="char-count" id="kofi-char">0 / 300 characters</span>
+            <button class="btn btn-primary btn-sm" onclick="submitReview('kofi')">Submit review →</button>
+          </div>
+        </div>
+
+        <!-- Teammate 2 — pending -->
+        <div class="reviewer-card" style="--rc-color:#00C87A" id="card-yasmine">
+          <div class="reviewer-header">
+            <div class="reviewer-avatar" style="background:#00C87A">YD</div>
+            <div>
+              <div class="reviewer-name">Yasmine Diallo</div>
+              <div class="reviewer-role">UI/UX Designer · Team Alpha</div>
+              <div class="reviewer-skills">
+                <span class="badge badge-green">Figma</span>
+                <span class="badge badge-gray">User Research</span>
+              </div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div style="font-size:11px;color:var(--c-muted)">Your relationship</div>
+              <div style="font-size:12px;font-weight:600;color:var(--c-text)">2 projects together</div>
+            </div>
+          </div>
+
+          <div class="rating-label">Rate Yasmine's performance</div>
+          <div class="rating-section">
+            <div class="criteria-row">
+              <span class="criteria-icon">💬</span>
+              <span class="criteria-name">Communication</span>
+              <div class="stars" data-card="yasmine" data-criteria="comm">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <span class="criteria-score" id="yasmine-comm-score">—</span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-icon">⚙️</span>
+              <span class="criteria-name">Technical skill</span>
+              <div class="stars" data-card="yasmine" data-criteria="tech">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <span class="criteria-score" id="yasmine-tech-score">—</span>
+            </div>
+            <div class="criteria-row">
+              <span class="criteria-icon">🤝</span>
+              <span class="criteria-name">Reliability</span>
+              <div class="stars" data-card="yasmine" data-criteria="rel">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <span class="criteria-score" id="yasmine-rel-score">—</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom:4px">
+            <label style="font-size:12px;font-weight:600;color:var(--c-text-2);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">
+              Comment <span style="font-weight:400;text-transform:none;color:var(--c-muted)">(optional)</span>
+            </label>
+            <textarea class="comment-box" id="yasmine-comment" placeholder="Share specific feedback — what did Yasmine do particularly well or could improve?"></textarea>
+          </div>
+          <div class="submit-row">
+            <span class="char-count" id="yasmine-char">0 / 300 characters</span>
+            <button class="btn btn-primary btn-sm" onclick="submitReview('yasmine')">Submit review →</button>
+          </div>
+        </div>
+
+        <!-- Teammate 3 — already submitted -->
+        <div class="reviewer-card done" style="--rc-color:#7C3AED">
+          <div class="reviewer-header">
+            <div class="reviewer-avatar" style="background:#7C3AED">SN</div>
+            <div>
+              <div class="reviewer-name">Salim Ndiaye</div>
+              <div class="reviewer-role">Product Manager · Team Alpha</div>
+              <div class="reviewer-skills">
+                <span class="badge" style="background:#F3E8FF;color:#6B21A8">Agile</span>
+                <span class="badge badge-gray">Analytics</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;padding:12px;background:var(--c-bg);border-radius:var(--r-sm)">
+            <div style="font-size:24px">✅</div>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--c-text)">Review submitted 2 days ago</div>
+              <div style="font-size:12px;color:var(--c-muted)">Communication: 5 · Technical: 4 · Reliability: 5</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: summary panel -->
+      <div class="review-summary">
+        <div class="summary-card">
+          <div class="summary-title">Team Alpha — Progress</div>
+          <div class="summary-progress">
+            <div class="progress-label">
+              <span>Reviews submitted</span>
+              <span id="progress-text">1 / 3</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-fill" style="width:33%"></div>
+            </div>
+          </div>
+          <div class="summary-members">
+            <div class="summary-member">
+              <div class="summary-member-avatar" style="background:#FF5C1A">KM</div>
+              <span class="summary-member-name">Kofi Mensah</span>
+              <span class="summary-member-status status-pending-sm" id="kofi-status">● Pending</span>
+            </div>
+            <div class="summary-member">
+              <div class="summary-member-avatar" style="background:#00C87A">YD</div>
+              <span class="summary-member-name">Yasmine Diallo</span>
+              <span class="summary-member-status status-pending-sm" id="yasmine-status">● Pending</span>
+            </div>
+            <div class="summary-member">
+              <div class="summary-member-avatar" style="background:#7C3AED">SN</div>
+              <span class="summary-member-name">Salim Ndiaye</span>
+              <span class="summary-member-status status-done-sm">✓ Done</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="xp-reward">
+          <div class="xp-icon">⚡</div>
+          <div>
+            <div class="xp-text-title">Earn +150 XP</div>
+            <div class="xp-text-sub">Complete all 3 reviews to claim your reward</div>
+          </div>
+        </div>
+
+        <div class="guidelines">
+          <div class="guidelines-title">📋 Review guidelines</div>
+          <ul>
+            <li>Be honest and constructive — not personal</li>
+            <li>Base ratings on actual collaboration</li>
+            <li>Reviews are anonymous to teammates</li>
+            <li>You cannot review yourself</li>
+            <li>Ratings affect leaderboard placement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     ② LEADERBOARD PAGE
+══════════════════════════════════════════════════ -->
+<section id="lb" class="page">
+  <aside class="sidebar">
+    <div class="sidebar-logo">IL</div>
+    <a class="nav-icon" title="Home">🏠</a>
+    <a class="nav-icon" title="Browse">🔍</a>
+    <a class="nav-icon" title="Applications">📄</a>
+    <a class="nav-icon" title="Peer Review">⭐</a>
+    <a class="nav-icon" title="Teams">👥</a>
+    <a class="nav-icon active" title="Leaderboard">🏆</a>
+    <a class="nav-icon bottom" title="Profile">👤</a>
+  </aside>
+
+  <main class="page-main">
+    <div class="page-header">
+      <h1 class="page-title">Leaderboard</h1>
+      <p class="page-sub">Ranked by peer score, projects and activity. Updated daily.</p>
+    </div>
+
+    <div class="lb-layout">
+      <!-- Main content -->
+      <div>
+
+        <!-- Podium top 3 -->
+        <div class="podium">
+          <!-- 2nd -->
+          <div class="podium-item second">
+            <div class="podium-avatar" style="background:#FF5C1A">KM</div>
+            <div class="podium-name">Kofi M.</div>
+            <div class="podium-score">⭐ 4.8</div>
+            <div class="podium-block">2</div>
+          </div>
+          <!-- 1st -->
+          <div class="podium-item first">
+            <div class="podium-crown">👑</div>
+            <div class="podium-avatar" style="background:#FFB800">ZA</div>
+            <div class="podium-name">Zineb Amrani</div>
+            <div class="podium-score">⭐ 4.95</div>
+            <div class="podium-block">1</div>
+          </div>
+          <!-- 3rd -->
+          <div class="podium-item third">
+            <div class="podium-avatar" style="background:#7C3AED">LS</div>
+            <div class="podium-name">Léa S.</div>
+            <div class="podium-score">⭐ 4.7</div>
+            <div class="podium-block">3</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="lb-filters">
+          <button class="lb-filter active">All time</button>
+          <button class="lb-filter">This month</button>
+          <button class="lb-filter">This week</button>
+          <button class="lb-filter" style="margin-left:auto">My university</button>
+          <button class="lb-filter">My country</button>
+        </div>
+
+        <!-- Table -->
+        <div class="lb-table-wrap">
+          <div class="lb-table-header">
+            <div style="text-align:center">#</div>
+            <div>Student</div>
+            <div style="text-align:center">Score</div>
+            <div style="text-align:center">Projects</div>
+            <div style="text-align:center">Teams</div>
+            <div>Badges</div>
+          </div>
+
+          <!-- rows -->
+          <div class="lb-row">
+            <div class="lb-rank gold">1</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#FFB800">ZA</div>
+              <div>
+                <div class="lb-name">Zineb Amrani</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">React</span>
+                  <span class="lb-skill">Python</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.95</span>
+            </div>
+            <div class="lb-num" style="text-align:center">8</div>
+            <div class="lb-num" style="text-align:center">4</div>
+            <div class="lb-badge-cell">
+              <span title="Top performer">👑</span>
+              <span title="7-day streak">🔥</span>
+              <span title="Team leader">👥</span>
+            </div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-rank silver">2</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#FF5C1A">KM</div>
+              <div>
+                <div class="lb-name">Kofi Mensah</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">Node.js</span>
+                  <span class="lb-skill">SQL</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.80</span>
+            </div>
+            <div class="lb-num" style="text-align:center">6</div>
+            <div class="lb-num" style="text-align:center">3</div>
+            <div class="lb-badge-cell">
+              <span title="Top reviewer">🏆</span>
+              <span title="7-day streak">🔥</span>
+            </div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-rank bronze">3</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#7C3AED">LS</div>
+              <div>
+                <div class="lb-name">Léa Soumaré</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">Figma</span>
+                  <span class="lb-skill">CSS</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.70</span>
+            </div>
+            <div class="lb-num" style="text-align:center">5</div>
+            <div class="lb-num" style="text-align:center">2</div>
+            <div class="lb-badge-cell">
+              <span title="Designer">🎨</span>
+              <span title="Consistent">⭐</span>
+            </div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-rank">4</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#00C87A">YD</div>
+              <div>
+                <div class="lb-name">Yasmine Diallo</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">UI/UX</span>
+                  <span class="lb-skill">Research</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.65</span>
+            </div>
+            <div class="lb-num" style="text-align:center">5</div>
+            <div class="lb-num" style="text-align:center">3</div>
+            <div class="lb-badge-cell">
+              <span title="Rising star">🚀</span>
+            </div>
+          </div>
+
+          <!-- YOU (highlighted) -->
+          <div class="lb-row me">
+            <div class="lb-rank">4 <span class="me-tag">You</span></div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#1A3DFF;border:2px solid var(--c-primary)">AK</div>
+              <div>
+                <div class="lb-name">Amara Koné <span style="font-size:11px;color:var(--c-primary);font-weight:600">← you</span></div>
+                <div class="lb-skills">
+                  <span class="lb-skill">React</span>
+                  <span class="lb-skill">Python</span>
+                  <span class="lb-skill">Figma</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-primary);font-size:16px">4.70</span>
+            </div>
+            <div class="lb-num" style="text-align:center">4</div>
+            <div class="lb-num" style="text-align:center">2</div>
+            <div class="lb-badge-cell">
+              <span title="Top reviewer">🏆</span>
+              <span title="Streak">🔥</span>
+              <span title="Team player">👥</span>
+            </div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-rank">5</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#0F0E0C">SN</div>
+              <div>
+                <div class="lb-name">Salim Ndiaye</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">Agile</span>
+                  <span class="lb-skill">Analytics</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.55</span>
+            </div>
+            <div class="lb-num" style="text-align:center">3</div>
+            <div class="lb-num" style="text-align:center">2</div>
+            <div class="lb-badge-cell">
+              <span title="PM">📊</span>
+            </div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-rank">6</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#E11D48">MB</div>
+              <div>
+                <div class="lb-name">Mariam Ba</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">Java</span>
+                  <span class="lb-skill">Spring</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.40</span>
+            </div>
+            <div class="lb-num" style="text-align:center">4</div>
+            <div class="lb-num" style="text-align:center">1</div>
+            <div class="lb-badge-cell">
+              <span title="Backend">⚙️</span>
+            </div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-rank">7</div>
+            <div class="lb-user">
+              <div class="lb-avatar" style="background:#0891B2">AT</div>
+              <div>
+                <div class="lb-name">Anas Toure</div>
+                <div class="lb-skills">
+                  <span class="lb-skill">DevOps</span>
+                  <span class="lb-skill">Docker</span>
+                </div>
+              </div>
+            </div>
+            <div class="lb-score-cell" style="justify-content:center">
+              <span style="color:var(--c-warning);font-size:16px">4.30</span>
+            </div>
+            <div class="lb-num" style="text-align:center">2</div>
+            <div class="lb-num" style="text-align:center">2</div>
+            <div class="lb-badge-cell">
+              <span title="DevOps">🐳</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right panel -->
+      <div class="lb-right">
+
+        <!-- My rank card -->
+        <div class="my-rank-card">
+          <div class="my-rank-label">Your current rank</div>
+          <div class="my-rank-num">#4</div>
+          <div class="my-rank-change">↑ Up from <strong>#7</strong> last month</div>
+          <div class="rank-progress-wrap">
+            <div class="rank-progress-label">
+              <span>Progress to #3</span>
+              <span>62%</span>
+            </div>
+            <div class="rank-progress-track">
+              <div class="rank-progress-fill"></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:rgba(255,255,255,.6)">
+            Submit 1 more peer review and upload 1 project to reach #3
+          </div>
+        </div>
+
+        <!-- Score breakdown -->
+        <div class="skill-card">
+          <div class="skill-card-title">Your score breakdown</div>
+          <div class="skill-row">
+            <div class="skill-row-top">
+              <span class="skill-row-name">💬 Communication</span>
+              <span class="skill-row-val">4.8</span>
+            </div>
+            <div class="skill-track">
+              <div class="skill-fill" style="width:96%;background:#1A3DFF"></div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top">
+              <span class="skill-row-name">⚙️ Technical</span>
+              <span class="skill-row-val">4.4</span>
+            </div>
+            <div class="skill-track">
+              <div class="skill-fill" style="width:88%;background:#FF5C1A"></div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top">
+              <span class="skill-row-name">🤝 Reliability</span>
+              <span class="skill-row-val">4.9</span>
+            </div>
+            <div class="skill-track">
+              <div class="skill-fill" style="width:98%;background:#00C87A"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--c-border)">
+            <div style="font-size:12px;font-weight:600;color:var(--c-text-2);margin-bottom:10px">How to climb 📈</div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--c-text-2)">
+                <span style="width:20px;height:20px;background:#EEF1FF;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">1</span>
+                Submit 2 peer reviews <span class="badge badge-blue" style="margin-left:auto">+100 XP</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--c-text-2)">
+                <span style="width:20px;height:20px;background:#EEF1FF;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">2</span>
+                Upload a new project <span class="badge badge-green" style="margin-left:auto">+50 XP</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--c-text-2)">
+                <span style="width:20px;height:20px;background:#EEF1FF;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">3</span>
+                Complete your profile <span class="badge badge-orange" style="margin-left:auto">+30 XP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</section>
+
+
+<script>
+/* ── Page switcher ── */
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.page-nav button')[id === 'peer' ? 0 : 1].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ── Star ratings ── */
+let scores = { kofi: {}, yasmine: {} };
+
+document.querySelectorAll('.stars').forEach(group => {
+  const card = group.dataset.card;
+  const criteria = group.dataset.criteria;
+  const stars = group.querySelectorAll('.star');
+
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = +star.dataset.val;
+      stars.forEach(s => s.classList.toggle('lit', +s.dataset.val <= val));
+    });
+    star.addEventListener('mouseleave', () => {
+      const current = scores[card]?.[criteria] || 0;
+      stars.forEach(s => s.classList.toggle('lit', +s.dataset.val <= current));
+    });
+    star.addEventListener('click', () => {
+      const val = +star.dataset.val;
+      if (!scores[card]) scores[card] = {};
+      scores[card][criteria] = val;
+      stars.forEach(s => s.classList.toggle('lit', +s.dataset.val <= val));
+      const scoreEl = document.getElementById(`${card}-${criteria}-score`);
+      if (scoreEl) scoreEl.textContent = val;
+      updateProgress();
+    });
+  });
+});
+
+/* ── Comment char count ── */
+['kofi', 'yasmine'].forEach(name => {
+  const ta = document.getElementById(`${name}-comment`);
+  const counter = document.getElementById(`${name}-char`);
+  if (ta && counter) {
+    ta.addEventListener('input', () => {
+      const len = Math.min(ta.value.length, 300);
+      ta.value = ta.value.slice(0, 300);
+      counter.textContent = `${len} / 300 characters`;
+    });
+  }
+});
+
+/* ── Submit review ── */
+let submitted = { kofi: false, yasmine: false };
+
+function submitReview(name) {
+  const s = scores[name] || {};
+  if (!s.comm || !s.tech || !s.rel) {
+    const card = document.getElementById(`card-${name}`);
+    card.style.outline = '2px solid var(--c-accent)';
+    setTimeout(() => card.style.outline = '', 1200);
+    alert('Please rate all 3 criteria before submitting.');
+    return;
+  }
+  submitted[name] = true;
+  const card = document.getElementById(`card-${name}`);
+  card.classList.add('done');
+  // disable inputs
+  card.querySelectorAll('.star, .comment-box, button').forEach(el => el.style.pointerEvents = 'none');
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = Object.values(submitted).filter(Boolean).length + 1; // +1 for Salim already done
+  const total = 3;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${total}`;
+  ['kofi','yasmine'].forEach(name => {
+    const el = document.getElementById(`${name}-status`);
+    if (el) {
+      el.textContent = submitted[name] ? '✓ Done' : '● Pending';
+      el.className = 'summary-member-status ' + (submitted[name] ? 'status-done-sm' : 'status-pending-sm');
+    }
+  });
+}
+
+/* ── Leaderboard filter pills ── */
+document.querySelectorAll('.lb-filter').forEach(f => {
+  f.addEventListener('click', function() {
+    const group = this.parentElement;
+    group.querySelectorAll('.lb-filter').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+/* ── Team tabs ── */
+document.querySelectorAll('.team-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.team-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
