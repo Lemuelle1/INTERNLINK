@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Applications - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-900 text-white p-6 overflow-y-auto">
+      <div class="flex items-center gap-2 mb-8">
+        <div class="bg-blue-600 p-2 rounded"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"></path><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z" clip-rule="evenodd"></path></svg></div>
+        <span class="font-bold text-lg">InternLink</span>
+      </div>
+      <nav class="space-y-2 mb-8">
+        <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📊 Dashboard</a>
+        <a href="opportunities.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📁 Manage Opportunities</a>
+        <a href="applications.html" class="block px-4 py-2 bg-blue-600 rounded-lg">📋 Applications</a>
+        <a href="students.html" class="block px-4 py-2 hover:bg-gray-800 rounded">👥 Students</a>
+        <a href="analytics.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📈 Analytics</a>
+        <a href="settings.html" class="block px-4 py-2 hover:bg-gray-800 rounded">⚙️ Settings</a>
+      </nav>
+      <div class="border-t border-gray-700 pt-4">
+        <button onclick="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-800 rounded">🚪 Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+      <div class="bg-white border-b p-6">
+        <h1 class="text-3xl font-bold mb-2">Student Applications</h1>
+        <p class="text-gray-600">Review and manage all student applications</p>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <input type="text" placeholder="Search by student or opportunity..." class="w-full px-4 py-2 border border-gray-300 rounded-lg" id="searchApps">
+
+        <div class="flex gap-2">
+          <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="filterStatus('all')">All</button>
+          <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100" onclick="filterStatus('pending')">Pending</button>
+          <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100" onclick="filterStatus('reviewed')">Reviewed</button>
+          <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100" onclick="filterStatus('accepted')">Accepted</button>
+          <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100" onclick="filterStatus('rejected')">Rejected</button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b">
+              <tr><th class="p-4 text-left">Student</th><th class="p-4 text-left">Opportunity</th><th class="p-4 text-left">Type</th><th class="p-4 text-left">Applied</th><th class="p-4 text-left">Status</th><th class="p-4">Actions</th></tr>
+            </thead>
+            <tbody id="appTable">
+              <tr class="border-b"><td class="p-4">Jane Doe</td><td class="p-4">Google SWE</td><td class="p-4">Internship</td><td class="p-4">Jun 1, 2026</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Pending</span></td><td class="p-4"><select class="text-sm border rounded" onchange="updateStatus('1', this.value)"><option value="pending">Pending</option><option value="reviewed">Reviewed</option><option value="accepted">Accepted</option><option value="rejected">Rejected</option></select></td></tr>
+              <tr class="border-b"><td class="p-4">Carlos Mendez</td><td class="p-4">Gates Scholar</td><td class="p-4">Scholarship</td><td class="p-4">May 30, 2026</td><td class="p-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Reviewed</span></td><td class="p-4"><select class="text-sm border rounded" onchange="updateStatus('2', this.value)"><option value="reviewed" selected>Reviewed</option><option value="accepted">Accepted</option><option value="rejected">Rejected</option></select></td></tr>
+              <tr class="border-b"><td class="p-4">Priya Sharma</td><td class="p-4">Microsoft PM</td><td class="p-4">Internship</td><td class="p-4">May 28, 2026</td><td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Accepted</span></td><td class="p-4"><select class="text-sm border rounded" onchange="updateStatus('3', this.value)"><option value="accepted" selected>Accepted</option><option value="rejected">Rejected</option></select></td></tr>
+              <tr class="border-b"><td class="p-4">Marcus Thompson</td><td class="p-4">Fulbright Award</td><td class="p-4">Scholarship</td><td class="p-4">May 25, 2026</td><td class="p-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Rejected</span></td><td class="p-4"><button class="text-blue-600 hover:underline text-sm">View</button></td></tr>
+              <tr><td class="p-4">Aisha Okonkwo</td><td class="p-4">Meta Data Science</td><td class="p-4">Internship</td><td class="p-4">May 20, 2026</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Pending</span></td><td class="p-4"><select class="text-sm border rounded" onchange="updateStatus('5', this.value)"><option value="pending">Pending</option><option value="reviewed">Reviewed</option><option value="accepted">Accepted</option><option value="rejected">Rejected</option></select></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('adminToken');
+    if (!token) window.location.href = '/pages/admin-login.html';
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/pages/admin-login.html';
+    }
+
+    function filterStatus(status) {
+      alert('Filtering by: ' + status);
+    }
+
+    function updateStatus(appId, newStatus) {
+      alert('Updated application ' + appId + ' to: ' + newStatus);
+    }
+  </script>
+</body>
+</html>

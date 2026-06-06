@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternLink • Scholarships</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <a href="/" class="text-xl font-bold text-sky-300">InternLink</a>
+      <nav class="hidden gap-6 md:flex text-slate-300">
+        <a href="/" class="hover:text-white">Home</a>
+        <a href="/pages/opportunities.html" class="hover:text-white">Opportunities</a>
+        <a href="/pages/scholarships.html" class="hover:text-white">Scholarships</a>
+        <button id="about-link" class="hover:text-white">About</button>
+      </nav>
+      <div id="nav-actions" class="flex items-center gap-3"></div>
+      <button id="mobile-menu-toggle" class="md:hidden text-slate-300">Menu</button>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-6 py-10">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="uppercase tracking-[0.35em] text-sky-300">Browse Scholarships</p>
+        <h1 class="mt-2 text-3xl font-bold text-white">Browse Scholarships</h1>
+        <p id="scholarship-count" class="mt-2 text-slate-400">Loading opportunities...</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="filter-btn active" data-filter="All">All</button>
+        <button class="filter-btn" data-filter="STEM">STEM</button>
+        <button class="filter-btn" data-filter="Research">Research</button>
+        <button class="filter-btn" data-filter="International">International</button>
+        <button class="filter-btn" data-filter="Graduate">Graduate</button>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <p class="text-slate-400">Search by title, provider, or keyword.</p>
+      <div class="relative w-full md:w-80">
+        <input id="scholarship-search" type="text" placeholder="Search scholarships..." class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-sky-400">
+      </div>
+    </div>
+
+    <div id="scholarship-list" class="mt-10 grid gap-5 lg:grid-cols-3"></div>
+    <p id="scholarship-error" class="mt-6 text-center text-rose-400"></p>
+  </main>
+  <script src="/js/auth.js"></script>
+  <script src="/js/scholarships.js"></script>
+</body>
+</html>

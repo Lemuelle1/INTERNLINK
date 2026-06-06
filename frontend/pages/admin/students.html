@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Students - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-900 text-white p-6 overflow-y-auto">
+      <div class="flex items-center gap-2 mb-8">
+        <div class="bg-blue-600 p-2 rounded"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"></path><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z" clip-rule="evenodd"></path></svg></div>
+        <span class="font-bold text-lg">InternLink</span>
+      </div>
+      <nav class="space-y-2 mb-8">
+        <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📊 Dashboard</a>
+        <a href="opportunities.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📁 Manage Opportunities</a>
+        <a href="applications.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📋 Applications</a>
+        <a href="students.html" class="block px-4 py-2 bg-blue-600 rounded-lg">👥 Students</a>
+        <a href="analytics.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📈 Analytics</a>
+        <a href="settings.html" class="block px-4 py-2 hover:bg-gray-800 rounded">⚙️ Settings</a>
+      </nav>
+      <div class="border-t border-gray-700 pt-4">
+        <button onclick="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-800 rounded">🚪 Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+      <div class="bg-white border-b p-6">
+        <h1 class="text-3xl font-bold mb-2">Students</h1>
+        <p class="text-gray-600" id="studentCount">5 registered students</p>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div class="flex gap-4">
+          <input type="text" placeholder="Search students..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg" id="searchStud">
+          <button onclick="exportStudents()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">📥 Export</button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b">
+              <tr><th class="p-4 text-left">Student</th><th class="p-4 text-left">University</th><th class="p-4 text-left">Program</th><th class="p-4 text-left">Email</th><th class="p-4">Profile</th></tr>
+            </thead>
+            <tbody id="studTable">
+              <tr class="border-b"><td class="p-4"><div class="w-8 h-8 bg-blue-600 rounded-full inline-block mr-2"></div>Jane Doe</td><td class="p-4">MIT</td><td class="p-4">Computer Science</td><td class="p-4">jane@mit.edu</td><td class="p-4"><button class="text-blue-600 hover:underline text-sm">View</button></td></tr>
+              <tr class="border-b"><td class="p-4"><div class="w-8 h-8 bg-green-600 rounded-full inline-block mr-2"></div>Carlos Mendez</td><td class="p-4">Stanford</td><td class="p-4">Business</td><td class="p-4">carlos@stanford.edu</td><td class="p-4"><button class="text-blue-600 hover:underline text-sm">View</button></td></tr>
+              <tr class="border-b"><td class="p-4"><div class="w-8 h-8 bg-purple-600 rounded-full inline-block mr-2"></div>Priya Sharma</td><td class="p-4">UC Berkeley</td><td class="p-4">Engineering</td><td class="p-4">priya@berkeley.edu</td><td class="p-4"><button class="text-blue-600 hover:underline text-sm">View</button></td></tr>
+              <tr class="border-b"><td class="p-4"><div class="w-8 h-8 bg-orange-600 rounded-full inline-block mr-2"></div>Aisha Okonkwo</td><td class="p-4">Harvard</td><td class="p-4">Computer Science</td><td class="p-4">aisha@harvard.edu</td><td class="p-4"><button class="text-blue-600 hover:underline text-sm">View</button></td></tr>
+              <tr><td class="p-4"><div class="w-8 h-8 bg-red-600 rounded-full inline-block mr-2"></div>Marcus Thompson</td><td class="p-4">Yale</td><td class="p-4">Finance</td><td class="p-4">marcus@yale.edu</td><td class="p-4"><button class="text-blue-600 hover:underline text-sm">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('adminToken');
+    if (!token) window.location.href = '/pages/admin-login.html';
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/pages/admin-login.html';
+    }
+
+    function exportStudents() {
+      alert('Students exported to CSV');
+    }
+  </script>
+</body>
+</html>

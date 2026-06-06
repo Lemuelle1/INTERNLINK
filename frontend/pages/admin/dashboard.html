@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - InternLink</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-900 text-white p-6 overflow-y-auto">
+      <div class="flex items-center gap-2 mb-8">
+        <div class="bg-blue-600 p-2 rounded">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"></path>
+            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <span class="font-bold text-lg">InternLink</span>
+      </div>
+
+      <nav class="space-y-2 mb-8">
+        <a href="dashboard.html" class="block px-4 py-2 bg-blue-600 rounded-lg">📊 Dashboard</a>
+        <a href="opportunities.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📁 Manage Opportunities</a>
+        <a href="applications.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📋 Applications</a>
+        <a href="students.html" class="block px-4 py-2 hover:bg-gray-800 rounded">👥 Students</a>
+        <a href="analytics.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📈 Analytics</a>
+        <a href="settings.html" class="block px-4 py-2 hover:bg-gray-800 rounded">⚙️ Settings</a>
+      </nav>
+
+      <div class="border-t border-gray-700 pt-4">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">AD</div>
+          <div>
+            <p class="font-medium">Admin User</p>
+            <p class="text-gray-400 text-sm">admin@internlink.com</p>
+          </div>
+        </div>
+        <button onclick="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-800 rounded">🚪 Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+      <div class="bg-white border-b p-6">
+        <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <p class="text-gray-600">Welcome back, Admin. Here's what's happening on InternLink.</p>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm">Total Students</p>
+                <p class="text-3xl font-bold">48,234</p>
+              </div>
+              <span class="text-green-600 text-sm font-semibold">+12% this month</span>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm">Total Applications</p>
+                <p class="text-3xl font-bold">12,891</p>
+              </div>
+              <span class="text-green-600 text-sm font-semibold">+8% this week</span>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm">Active Opportunities</p>
+                <p class="text-3xl font-bold">347</p>
+              </div>
+              <span class="text-green-600 text-sm font-semibold">+23% this week</span>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm">Scholarships Posted</p>
+                <p class="text-3xl font-bold">89</p>
+              </div>
+              <span class="text-green-600 text-sm font-semibold">+4% this month</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Application Trends</h3>
+            <canvas id="trendsChart"></canvas>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Opportunities by Field</h3>
+            <canvas id="fieldChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="font-bold mb-4">Recent Applications</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="border-b">
+                <tr><th class="text-left p-2">Student</th><th class="text-left p-2">Opportunity</th><th class="text-left p-2">Date</th></tr>
+              </thead>
+              <tbody>
+                <tr class="border-b"><td class="p-2">Jane Doe</td><td class="p-2">Google SWE Intern</td><td class="p-2">Jun 1, 2026</td></tr>
+                <tr class="border-b"><td class="p-2">Carlos Mendez</td><td class="p-2">Gates Scholarship</td><td class="p-2">May 30, 2026</td></tr>
+                <tr class="border-b"><td class="p-2">Priya Sharma</td><td class="p-2">Microsoft PM Intern</td><td class="p-2">May 28, 2026</td></tr>
+                <tr class="border-b"><td class="p-2">Marcus Thompson</td><td class="p-2">Fulbright Award</td><td class="p-2">May 25, 2026</td></tr>
+                <tr><td class="p-2">Aisha Okonkwo</td><td class="p-2">Meta Data Science</td><td class="p-2">May 20, 2026</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('adminToken');
+    if (!token) window.location.href = '/pages/admin-login.html';
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminRole');
+      window.location.href = '/pages/admin-login.html';
+    }
+
+    // Trends Chart
+    const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+    new Chart(trendsCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+          { label: 'Internships', data: [850, 1100, 950, 1050, 1200, 1150], backgroundColor: '#3B82F6' },
+          { label: 'Scholarships', data: [420, 580, 490, 520, 610, 590], backgroundColor: '#8B5CF6' }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    });
+
+    // Field Chart
+    const fieldCtx = document.getElementById('fieldChart').getContext('2d');
+    new Chart(fieldCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Engineering', 'Business', 'Data Science', 'Design', 'Other'],
+        datasets: [{
+          data: [38, 24, 18, 12, 8],
+          backgroundColor: ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  </script>
+</body>
+</html>

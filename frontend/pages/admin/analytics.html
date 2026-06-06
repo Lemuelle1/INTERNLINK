@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-900 text-white p-6 overflow-y-auto">
+      <div class="flex items-center gap-2 mb-8">
+        <div class="bg-blue-600 p-2 rounded"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"></path><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z" clip-rule="evenodd"></path></svg></div>
+        <span class="font-bold text-lg">InternLink</span>
+      </div>
+      <nav class="space-y-2 mb-8">
+        <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📊 Dashboard</a>
+        <a href="opportunities.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📁 Manage Opportunities</a>
+        <a href="applications.html" class="block px-4 py-2 hover:bg-gray-800 rounded">📋 Applications</a>
+        <a href="students.html" class="block px-4 py-2 hover:bg-gray-800 rounded">👥 Students</a>
+        <a href="analytics.html" class="block px-4 py-2 bg-blue-600 rounded-lg">📈 Analytics</a>
+        <a href="settings.html" class="block px-4 py-2 hover:bg-gray-800 rounded">⚙️ Settings</a>
+      </nav>
+      <div class="border-t border-gray-700 pt-4">
+        <button onclick="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-800 rounded">🚪 Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+      <div class="bg-white border-b p-6">
+        <h1 class="text-3xl font-bold mb-2">Analytics</h1>
+        <p class="text-gray-600">Platform performance and insights</p>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Application Volume by Type</h3>
+            <p class="text-sm text-gray-600 mb-4">Internships vs Scholarships per month</p>
+            <canvas id="volumeChart"></canvas>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Growth Trends</h3>
+            <p class="text-sm text-gray-600 mb-4">Total applications over time</p>
+            <canvas id="growthChart"></canvas>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Application Trends</h3>
+            <p class="text-sm text-gray-600 mb-4">Monthly applications vs accepted</p>
+            <canvas id="trendsChart"></canvas>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Opportunities by Field</h3>
+            <p class="text-sm text-gray-600 mb-4">Distribution by category</p>
+            <canvas id="fieldChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('adminToken');
+    if (!token) window.location.href = '/pages/admin-login.html';
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/pages/admin-login.html';
+    }
+
+    // Volume Chart
+    const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+    new Chart(volumeCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+          { label: 'Internships', data: [1000, 750, 850, 920, 1050, 1100], backgroundColor: '#3B82F6' },
+          { label: 'Scholarships', data: [420, 580, 490, 520, 610, 590], backgroundColor: '#8B5CF6' }
+        ]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Growth Chart
+    const growthCtx = document.getElementById('growthChart').getContext('2d');
+    new Chart(growthCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Total Applications',
+          data: [1420, 1330, 1340, 1440, 1660, 1690],
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderColor: '#3B82F6',
+          tension: 0.4
+        }]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Trends Chart
+    const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+    new Chart(trendsCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+          { label: 'Applications', data: [1420, 1330, 1340, 1440, 1660, 1690], borderColor: '#8B5CF6', backgroundColor: 'rgba(139, 92, 246, 0.1)' },
+          { label: 'Accepted', data: [680, 700, 750, 820, 950, 1050], borderColor: '#10B981', backgroundColor: 'rgba(16, 185, 129, 0.1)' }
+        ]
+      },
+      options: { responsive: true, tension: 0.4 }
+    });
+
+    // Field Chart
+    const fieldCtx = document.getElementById('fieldChart').getContext('2d');
+    new Chart(fieldCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Engineering', 'Business', 'Data Science', 'Design', 'Other'],
+        datasets: [{
+          data: [38, 24, 18, 12, 8],
+          backgroundColor: ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']
+        }]
+      },
+      options: { responsive: true }
+    });
+  </script>
+</body>
+</html>
