@@ -1,116 +1,94 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
+const User = require('./models/User');
 const Internship = require('./models/Internship');
 const Scholarship = require('./models/Scholarship');
 
 dotenv.config();
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 const internships = [
   {
-    title: 'Software Engineering Intern',
-    company: 'Google',
-    location: 'Mountain View, CA',
-    salary: '$8,000/mo',
-    dueDate: new Date('2026-08-15'),
-    tags: ['Engineering', 'Full-stack'],
-    matchPercentage: 96,
-    shortDescription: "Join Google's core engineering team and work on products used by billions."
+    title: 'Software Engineering Intern', company: 'Google', location: 'Mountain View, CA', salary: '$9,000/mo', dueDate: new Date('2026-10-15'),
+    tags: ['Software Engineering', 'Python', 'C++'], description: 'Work on core Google products.', matchPercentage: 96, remote: false, requirements: ['C++', 'Python']
   },
   {
-    title: 'Product Management Intern',
-    company: 'Microsoft',
-    location: 'Redmond, WA',
-    salary: '$7,500/mo',
-    dueDate: new Date('2026-09-01'),
-    tags: ['Product', 'Strategy'],
-    matchPercentage: 89,
-    shortDescription: 'Shape the future of Microsoft\'s enterprise cloud products as a PM intern.'
+    title: 'Product Management Intern', company: 'Microsoft', location: 'Redmond, WA', salary: '$8,500/mo', dueDate: new Date('2026-11-01'),
+    tags: ['Product Management', 'Strategy'], description: 'Define the future of Microsoft products.', matchPercentage: 89, remote: false, requirements: ['Business acumen']
   },
   {
-    title: 'Data Science Intern',
-    company: 'Meta',
-    location: 'Menlo Park, CA',
-    salary: '$9,000/mo',
-    dueDate: new Date('2026-07-30'),
-    tags: ['Data Science', 'ML'],
-    matchPercentage: 82,
-    shortDescription: 'Leverage large-scale data to drive insights across Meta\'s platforms.'
+    title: 'Data Science Intern', company: 'Meta', location: 'Menlo Park, CA', salary: '$8,800/mo', dueDate: new Date('2026-10-30'),
+    tags: ['Data Science', 'Python', 'SQL'], description: 'Analyze large datasets.', matchPercentage: 82, remote: false, requirements: ['Python', 'SQL', 'ML']
   },
   {
-    title: 'iOS Engineering Intern',
-    company: 'Apple',
-    location: 'Cupertino, CA',
-    salary: '$8,500/mo',
-    dueDate: new Date('2026-08-20'),
-    tags: ['Mobile', 'Swift'],
-    matchPercentage: 91,
-    shortDescription: 'Build the next generation of iOS features for hundreds of millions of users.'
+    title: 'Hardware Engineering Intern', company: 'Apple', location: 'Cupertino, CA', salary: '$8,700/mo', dueDate: new Date('2026-11-15'),
+    tags: ['Hardware', 'Electrical Engineering'], description: 'Design next generation Apple devices.', matchPercentage: 91, remote: false, requirements: ['EE', 'Verilog']
   },
   {
-    title: 'Backend Engineering Intern',
-    company: 'Stripe',
-    location: 'Remote',
-    salary: '$8,200/mo',
-    dueDate: new Date('2026-08-10'),
-    tags: ['Backend', 'Remote'],
-    matchPercentage: 88,
-    shortDescription: 'Build reliable, scalable payment infrastructure used by millions of businesses.'
+    title: 'Backend Engineering Intern', company: 'Stripe', location: 'San Francisco, CA', salary: '$9,200/mo', dueDate: new Date('2026-10-20'),
+    tags: ['Backend', 'Go', 'Ruby'], description: 'Build payment infrastructure.', matchPercentage: 88, remote: false, requirements: ['Go', 'Ruby']
   },
   {
-    title: 'Data Analytics Intern',
-    company: 'Netflix',
-    location: 'Los Gatos, CA',
-    salary: '$7,800/mo',
-    dueDate: new Date('2026-09-05'),
-    tags: ['Analytics', 'Python'],
-    matchPercentage: 79,
-    shortDescription: 'Analyze viewer data to improve Netflix\'s recommendation algorithms.'
+    title: 'UI/UX Design Intern', company: 'Netflix', location: 'Los Gatos, CA', salary: '$8,600/mo', dueDate: new Date('2026-11-05'),
+    tags: ['Design', 'Figma', 'UI/UX'], description: 'Design amazing user experiences.', matchPercentage: 79, remote: false, requirements: ['Figma', 'Portfolio']
   }
 ];
 
 const scholarships = [
   {
-    name: 'Gates Millennium Scholars',
-    provider: 'Gates Foundation',
-    amount: '$50,000',
-    dueDate: new Date('2026-10-01'),
-    tags: ['STEM', 'Leadership'],
-    matchPercentage: 94,
-    shortDescription: 'Supporting exceptional students of color in pursuing higher education in STEM.'
+    name: 'Gates Millennium Scholars', provider: 'Bill & Melinda Gates Foundation', amount: '$50k', dueDate: new Date('2026-12-01'),
+    tags: ['Undergraduate', 'Minority'], description: 'Full scholarship for outstanding minority students.', matchPercentage: 94
   },
   {
-    name: 'Fulbright U.S. Student Award',
-    provider: 'Fulbright Program',
-    amount: 'Full Funding',
-    dueDate: new Date('2026-10-15'),
-    tags: ['Research', 'International'],
-    matchPercentage: 87,
-    shortDescription: 'Study, research, or teach English abroad for one academic year.'
+    name: 'Fulbright Foreign Student Program', provider: 'U.S. Department of State', amount: 'Full Funding', dueDate: new Date('2026-10-15'),
+    tags: ['International', 'Graduate'], description: 'Grants for international students to study in the US.', matchPercentage: 87
   },
   {
-    name: 'Knight-Hennessy Scholars',
-    provider: 'Knight Foundation',
-    amount: 'Full Funding',
-    dueDate: new Date('2026-10-12'),
-    tags: ['Graduate', 'Leadership'],
-    matchPercentage: 76,
-    shortDescription: "Stanford's flagship graduate scholarship for future global leaders."
+    name: 'Knight-Hennessy Scholars', provider: 'Stanford University', amount: 'Full Funding', dueDate: new Date('2026-10-09'),
+    tags: ['Graduate', 'Leadership'], description: 'Full funding for any graduate degree at Stanford.', matchPercentage: 76
   }
 ];
 
-async function seed() {
+const seedData = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
     await Internship.deleteMany();
     await Scholarship.deleteMany();
+    await User.deleteOne({ email: 'jane@mit.edu' });
+
     await Internship.insertMany(internships);
     await Scholarship.insertMany(scholarships);
-    console.log('Seed data loaded successfully.');
-    process.exit(0);
-  } catch (error) {
-    console.error('Seed error:', error);
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('password123', salt);
+
+    const student = new User({
+      name: 'Jane Doe',
+      email: 'jane@mit.edu',
+      password: hashedPassword,
+      role: 'student',
+      university: 'MIT',
+      programOfStudy: 'B.S. Computer Science & Engineering',
+      year: 'Junior',
+      gpa: '3.87/4.00',
+      graduationYear: 'May 2027',
+      skills: ['React', 'TypeScript', 'Python', 'Machine Learning', 'Node.js', 'PostgreSQL', 'Git', 'Docker', 'AWS', 'GraphQL'],
+      bio: 'Computer Science Student at MIT passionate about software engineering.',
+      phone: '+1 (617) 555-0192',
+      linkedin: 'linkedin.com/in/janedoe',
+      github: 'github.com/janedoe',
+      portfolio: 'janedoe.dev',
+      profileComplete: 78
+    });
+    await student.save();
+
+    console.log('Seed data inserted successfully');
+    process.exit();
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
-}
+};
 
-seed();
+seedData();

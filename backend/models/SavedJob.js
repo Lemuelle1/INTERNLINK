@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
-const applicationSchema = new mongoose.Schema({
+const savedJobSchema = new mongoose.Schema({
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   opportunityId: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: 'opportunityType' },
   opportunityType: { type: String, required: true, enum: ['Internship', 'Scholarship'] },
-  status: { type: String, enum: ['pending', 'reviewed', 'accepted', 'rejected'], default: 'pending' },
-  appliedDate: { type: Date, default: Date.now },
-  notes: { type: String }
+  savedDate: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Application', applicationSchema);
+module.exports = mongoose.model('SavedJob', savedJobSchema);

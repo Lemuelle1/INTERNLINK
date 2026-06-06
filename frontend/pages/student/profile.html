@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternLink - My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 flex-shrink-0 hidden md:flex flex-col text-white h-full transition-all duration-300">
+        <div class="p-6 flex items-center space-x-3">
+            <i class="fas fa-link text-indigo-400 text-2xl"></i>
+            <span class="text-xl font-bold tracking-wider">InternLink</span>
+        </div>
+        
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+            <a href="dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="profile.html" class="nav-link active"><i class="fas fa-user"></i> My Profile</a>
+            <a href="upload-cv.html" class="nav-link"><i class="fas fa-file-upload"></i> Upload CV</a>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-2">Discover</p>
+            <a href="opportunities.html" class="nav-link"><i class="fas fa-briefcase"></i> Opportunities</a>
+            <a href="scholarships.html" class="nav-link"><i class="fas fa-graduation-cap"></i> Scholarships</a>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-2">Manage</p>
+            <a href="my-applications.html" class="nav-link"><i class="fas fa-paper-plane"></i> My Applications</a>
+            <a href="saved-jobs.html" class="nav-link"><i class="fas fa-bookmark"></i> Saved Jobs</a>
+        </nav>
+        
+        <div class="p-4 border-t border-gray-700">
+            <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="#" onclick="logout()" class="nav-link text-red-400 hover:text-red-300 hover:bg-red-900/20"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header class="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
+            <h1 class="text-xl font-semibold text-gray-800">My Profile</h1>
+            <div class="flex items-center space-x-4">
+                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold" id="userInitial">J</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8">
+            <div class="max-w-5xl mx-auto space-y-6">
+                
+                <!-- Profile Header -->
+                <div class="glass-card rounded-xl p-8 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20"></div>
+                    <div class="relative z-10 h-32 w-32 rounded-full bg-indigo-600 text-white flex items-center justify-center text-5xl font-bold shadow-lg border-4 border-white" id="profileImage">JD</div>
+                    <div class="relative z-10 flex-1 text-center md:text-left">
+                        <h2 class="text-3xl font-bold text-gray-900" id="profileName">Jane Doe</h2>
+                        <p class="text-indigo-600 font-medium text-lg mt-1" id="profileTitle">Computer Science Student • MIT Class of 2027</p>
+                        <p class="text-gray-500 mt-1"><i class="fas fa-map-marker-alt mr-2"></i> Cambridge, MA</p>
+                        
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
+                            <span class="text-gray-600 text-sm"><i class="fas fa-envelope mr-2"></i> jane.doe@mit.edu</span>
+                            <span class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i> +1 (617) 555-0192</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 bg-indigo-50 px-4 py-2 rounded-lg text-center border border-indigo-100">
+                        <div class="text-2xl font-bold text-indigo-600">78%</div>
+                        <div class="text-xs font-semibold text-indigo-500 uppercase tracking-wide">Profile Strength</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Left Column -->
+                    <div class="md:col-span-2 space-y-6">
+                        
+                        <!-- Academic Info -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><i class="fas fa-graduation-cap text-indigo-500 mr-2"></i> Academic Information</h3>
+                            <div class="grid grid-cols-2 gap-y-4">
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">University</p>
+                                    <p class="font-medium">MIT</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Program</p>
+                                    <p class="font-medium">B.S. Computer Science & Engineering</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Year</p>
+                                    <p class="font-medium">Junior</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">GPA</p>
+                                    <p class="font-medium">3.87 / 4.00</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Expected Graduation</p>
+                                    <p class="font-medium">May 2027</p>
+                                </div>
+                                <div class="col-span-2">
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Relevant Courses</p>
+                                    <p class="font-medium">Algorithms, ML, Distributed Systems</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><i class="fas fa-code text-indigo-500 mr-2"></i> Skills</h3>
+                            <div class="flex flex-wrap gap-2" id="skillsContainer">
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">React</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">TypeScript</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">Python</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">Machine Learning</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">Node.js</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">PostgreSQL</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">Git</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">Docker</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">AWS</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">GraphQL</span>
+                            </div>
+                        </div>
+
+                        <!-- Experience -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center"><i class="fas fa-briefcase text-indigo-500 mr-2"></i> Experience</h3>
+                            
+                            <div class="relative border-l border-gray-200 ml-3 space-y-8">
+                                <div class="pl-6 relative">
+                                    <div class="w-8 h-8 bg-blue-600 rounded-full absolute -left-4 flex items-center justify-center text-white text-sm font-bold shadow-md">S</div>
+                                    <h4 class="text-md font-bold text-gray-900">Software Engineering Intern</h4>
+                                    <p class="text-sm text-blue-600 font-medium">Stripe</p>
+                                    <p class="text-xs text-gray-500 mb-2">Jun 2025 – Aug 2025</p>
+                                    <p class="text-sm text-gray-700">Built RESTful APIs for payment processing using Go and PostgreSQL. Improved system throughput by 23%.</p>
+                                </div>
+                                <div class="pl-6 relative">
+                                    <div class="w-8 h-8 bg-blue-800 rounded-full absolute -left-4 flex items-center justify-center text-white text-xs font-bold shadow-md">MIT</div>
+                                    <h4 class="text-md font-bold text-gray-900">Research Assistant</h4>
+                                    <p class="text-sm text-blue-600 font-medium">MIT CSAIL</p>
+                                    <p class="text-xs text-gray-500 mb-2">Sep 2024 – May 2025</p>
+                                    <p class="text-sm text-gray-700">Conducted research on distributed machine learning models.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Certifications -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><i class="fas fa-award text-indigo-500 mr-2"></i> Certifications</h3>
+                            <div class="space-y-4">
+                                <div class="border border-gray-100 p-4 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg text-white flex items-center justify-center font-bold text-xs mb-3">AWS</div>
+                                    <h4 class="font-medium text-sm">AWS Solutions Architect</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Amazon Web Services • Mar 2026</p>
+                                </div>
+                                <div class="border border-gray-100 p-4 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg text-white flex items-center justify-center font-bold text-xs mb-3">GDA</div>
+                                    <h4 class="font-medium text-sm">Google Data Analytics</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Google • Jan 2026</p>
+                                </div>
+                                <div class="border border-gray-100 p-4 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg text-white flex items-center justify-center font-bold text-xs mb-3">MRD</div>
+                                    <h4 class="font-medium text-sm">Meta React Developer</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Meta • Nov 2025</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio Links -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><i class="fas fa-globe text-indigo-500 mr-2"></i> Portfolio & Links</h3>
+                            <div class="space-y-3">
+                                <a href="#" class="flex items-center justify-between border border-gray-100 p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                                    <div class="flex items-center text-sm">
+                                        <i class="fas fa-globe w-6 text-gray-400 group-hover:text-indigo-600 transition-colors"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-500">Portfolio Website</p>
+                                            <p class="font-medium text-gray-900">janedoe.dev</p>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-external-link-alt text-gray-300 group-hover:text-indigo-600 transition-colors"></i>
+                                </a>
+                                <a href="#" class="flex items-center justify-between border border-blue-100 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors group">
+                                    <div class="flex items-center text-sm">
+                                        <i class="fab fa-github w-6 text-blue-600"></i>
+                                        <div>
+                                            <p class="text-xs text-blue-500">GitHub</p>
+                                            <p class="font-medium text-blue-900">github.com/janedoe</p>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-external-link-alt text-blue-300 group-hover:text-blue-600 transition-colors"></i>
+                                </a>
+                                <a href="#" class="flex items-center justify-between border border-gray-100 p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                                    <div class="flex items-center text-sm">
+                                        <i class="fab fa-linkedin w-6 text-gray-400 group-hover:text-blue-700 transition-colors"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-500">LinkedIn</p>
+                                            <p class="font-medium text-gray-900">linkedin.com/in/janedoe</p>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-external-link-alt text-gray-300 group-hover:text-blue-700 transition-colors"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/student.js"></script>
+    <script src="../../js/profile.js"></script>
+</body>
+</html>

@@ -1,83 +1,66 @@
 const express = require('express');
+const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 const auth = require('../middleware/auth');
-const router = express.Router();
+const User = require('../models/User');
 
+// POST /api/auth/register
 router.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
   try {
-    const { name, email, password, university, programOfStudy, terms } = req.body;
-    if (!name || !email || !password || !programOfStudy || !terms) {
-      return res.status(400).json({ error: 'Please fill in all required fields and agree to terms.' });
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ msg: 'User already exists' });
     }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already in use.' });
-    }
-
+    user = new User({ name, email, password, role: 'student' });
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      university: university || '',
-      programOfStudy,
-      role: 'student'
-    });
-
+    user.password = await bcrypt.hash(password, salt);
     await user.save();
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, university: user.university, programOfStudy: user.programOfStudy, role: user.role } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Registration failed.' });
+    const payload = { user: { id: user.id } };
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
+      if (err) throw err;
+      res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 
+// POST /api/auth/login
 router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
-
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials.' });
+      return res.status(400).json({ msg: 'Invalid Credentials' });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Invalid Credentials' });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(400).json({ error: 'Invalid credentials.' });
-    }
-
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, university: user.university, programOfStudy: user.programOfStudy, role: user.role } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Login failed.' });
+    const payload = { user: { id: user.id } };
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
+      if (err) throw err;
+      res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 
-router.post('/logout', (req, res) => {
-  res.json({ message: 'Logged out successfully.' });
-});
-
+// GET /api/auth/me
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('-password');
-    if (!user) {
-      return res.status(404).json({ error: 'User not found.' });
-    }
+    const user = await User.findById(req.user.id).select('-password');
     res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Unable to retrieve user.' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 });
 

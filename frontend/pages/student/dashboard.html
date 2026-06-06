@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternLink - Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 font-sans flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 flex-shrink-0 hidden md:flex flex-col text-white h-full transition-all duration-300">
+        <div class="p-6 flex items-center space-x-3">
+            <i class="fas fa-link text-indigo-400 text-2xl"></i>
+            <span class="text-xl font-bold tracking-wider">InternLink</span>
+        </div>
+        
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+            <a href="dashboard.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="profile.html" class="nav-link"><i class="fas fa-user"></i> My Profile</a>
+            <a href="upload-cv.html" class="nav-link"><i class="fas fa-file-upload"></i> Upload CV</a>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-2">Discover</p>
+            <a href="opportunities.html" class="nav-link"><i class="fas fa-briefcase"></i> Opportunities</a>
+            <a href="scholarships.html" class="nav-link"><i class="fas fa-graduation-cap"></i> Scholarships</a>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-2">Manage</p>
+            <a href="my-applications.html" class="nav-link"><i class="fas fa-paper-plane"></i> My Applications</a>
+            <a href="saved-jobs.html" class="nav-link"><i class="fas fa-bookmark"></i> Saved Jobs</a>
+        </nav>
+        
+        <div class="p-4 border-t border-gray-700">
+            <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="#" onclick="logout()" class="nav-link text-red-400 hover:text-red-300 hover:bg-red-900/20"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Header -->
+        <header class="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
+            <button class="md:hidden text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex-1"></div>
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-400 hover:text-gray-600 relative">
+                    <i class="far fa-bell text-xl"></i>
+                    <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">2</span>
+                </button>
+                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold" id="userInitial">J</div>
+            </div>
+        </header>
+
+        <!-- Content Scrollable Area -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-8">
+            <div class="max-w-7xl mx-auto space-y-8">
+                
+                <!-- Welcome Section -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900" id="welcomeMsg">Good morning, Jane! 🎉</h1>
+                        <p class="text-gray-500 mt-1">Here's what's happening with your career journey today</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="upload-cv.html" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-colors shadow-sm">
+                            <i class="fas fa-upload mr-2"></i> Upload CV
+                        </a>
+                        <a href="opportunities.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm">
+                            Browse Opportunities
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 rounded-xl border-l-4 border-indigo-500 hover-lift">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Applications</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-1">8</h3>
+                            </div>
+                            <div class="p-3 bg-indigo-50 rounded-lg text-indigo-600">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-green-600 mt-4 flex items-center"><i class="fas fa-arrow-up mr-1"></i> +2 this week</p>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-xl border-l-4 border-emerald-500 hover-lift">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Saved Jobs</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-1">23</h3>
+                            </div>
+                            <div class="p-3 bg-emerald-50 rounded-lg text-emerald-600">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-orange-500 mt-4 flex items-center"><i class="fas fa-clock mr-1"></i> 3 expiring soon</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-xl border-l-4 border-purple-500 hover-lift">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Profile Views</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-1">47</h3>
+                            </div>
+                            <div class="p-3 bg-purple-50 rounded-lg text-purple-600">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-green-600 mt-4 flex items-center"><i class="fas fa-arrow-up mr-1"></i> +12 this week</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-xl border-l-4 border-blue-500 hover-lift">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Matches</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-1">156</h3>
+                            </div>
+                            <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">New opportunities</p>
+                    </div>
+                </div>
+
+                <!-- Profile Completion Section -->
+                <div class="glass-card rounded-xl p-6 md:p-8">
+                    <div class="flex justify-between items-end mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-900">Complete Your Profile</h2>
+                            <p class="text-sm text-gray-500">A complete profile attracts more employers</p>
+                        </div>
+                        <span class="text-2xl font-bold text-indigo-600" id="profileCompleteText">78%</span>
+                    </div>
+                    
+                    <div class="w-full bg-gray-200 rounded-full h-3 mb-6">
+                        <div class="bg-indigo-600 h-3 rounded-full transition-all duration-1000" style="width: 78%" id="profileCompleteBar"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-check-circle text-green-500 mr-2 text-lg"></i> Basic Info
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-check-circle text-green-500 mr-2 text-lg"></i> Skills
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-check-circle text-green-500 mr-2 text-lg"></i> CV Upload
+                        </div>
+                        <div class="flex items-center text-sm text-gray-400">
+                            <i class="far fa-circle mr-2 text-lg"></i> Portfolio
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/student.js"></script>
+</body>
+</html>
